@@ -7,6 +7,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.log4j.Logger;
 
 /**
  * A graph direction transformer mapper.
@@ -15,15 +16,18 @@ import org.apache.hadoop.mapreduce.Mapper;
  */
 public class EdgeUndirectionMapper extends Mapper<LongWritable, Text, IntWritable, Pair> {
 
-    //Delimiter separator
+    private static final Logger logger = Logger.getLogger(EdgeUndirectionMapper.class);
+
+    // Input delimiter character
     private String delimiter;
-    //Number of disjoint edge partitions
+
+    // Number of disjoint edge partitions
     private int rho;
 
     /**
-     * A map method getting an unsorted edge sorting it and hashing it by its
-     * first ordered vertex into a disjoint edge partition, discarding also any
-     * loop edge.
+     * A map method getting an edge as a pair of vertices, sorting and hashing
+     * it by the lowest vertex into a disjoint edge partition, discarding loops
+     * and any invalid formated edge.
      *
      * @param key the offset of the line within the input file.
      * @param value a line in <code><v, u></code> form.
@@ -31,34 +35,33 @@ public class EdgeUndirectionMapper extends Mapper<LongWritable, Text, IntWritabl
      */
     @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        //Getting the value as a raw line
-        String line = value.toString();
+        // Extracting the input line into tokens
+        String[] tokens = value.toString().split(delimiter);
 
-        //Extracting all the tokens within this line
-        String[] tokens = line.split(delimiter);
-
-        //Checking if the raw line represents an edge otherwise ignore
         if (tokens.length == 2) {
-            //Setting the source vertex
-            int v = Integer.parseInt(tokens[0]);
+            try {
+                // Getting the source and target vertices
+                int v = Integer.parseInt(tokens[0]);
+                int u = Integer.parseInt(tokens[1]);
 
-            //Setting the target vertex
-            int u = Integer.parseInt(tokens[1]);
+                // Hashing the edge by the lowest vertex
+                if (v < u) {
+                    int hv = v % rho;
 
-            //Ordering vertices within edge
-            if (v < u) {
-                //Hashing the first ordered vertex
-                int hv = v % rho;
+                    context.write(new IntWritable(hv), new Pair(v, u));
+                } else if (v > u) {
+                    int hu = u % rho;
 
-                //Emitting the sorted edge into the bin keyed by the hash value
-                context.write(new IntWritable(hv), new Pair(v, u));
-            } else if (v > u) {
-                //Hashing the first ordered vertex
-                int hu = u % rho;
+                    context.write(new IntWritable(hu), new Pair(u, v));
+                } else {
+                    logger.warn("Ignoring loop edge for input '" + value.toString() + "'");
+                }
 
-                //Emitting the sorted edge into the bin keyed by the hash value
-                context.write(new IntWritable(hu), new Pair(u, v));
+            } catch (NumberFormatException exc) {
+                logger.warn("Invalid number format exception for input '" + value.toString() + "'");
             }
+        } else {
+            logger.warn("Invalid format exception for input '" + value.toString() + "'");
         }
     }
 
@@ -69,19 +72,9 @@ public class EdgeUndirectionMapper extends Mapper<LongWritable, Text, IntWritabl
      */
     @Override
     public void setup(Context context) throws IOException, InterruptedException {
-        //Getting the configuration of the job
         Configuration conf = context.getConfiguration();
 
-        //Reading the delimiter vertex separator
-        delimiter = conf.get("dataset.text.delimiter", "\t");
-
-        //Reading the number of edge partitions
+        delimiter = conf.get("dataset.text.delimiter", ",");
         rho = conf.getInt("dataset.edgeset.rho", 1);
-
-        //Checking for the lower acceptable bound
-        if (rho < 1) {
-            //Setting the default value
-            rho = 1;
-        }
     }
 }
