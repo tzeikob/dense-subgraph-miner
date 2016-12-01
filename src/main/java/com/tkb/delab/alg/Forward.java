@@ -26,6 +26,10 @@ public class Forward implements Triangulator {
      */
     @Override
     public THashSet<Triangle> list(THashSet<Edge> edges) {
+        if (edges == null || edges.size() <= 2) {
+            return new THashSet<Triangle>();
+        }
+        
         //Creating an empty set of triangles
         THashSet<Triangle> triangles = new THashSet<Triangle>();
 
