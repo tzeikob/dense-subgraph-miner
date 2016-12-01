@@ -10,7 +10,8 @@ import gnu.trove.set.hash.TIntHashSet;
 /**
  * A triangulator implementing the node iteration plus algorithm listing all
  * triangles within a given graph, assuming there is no duplicate edges and no
- * loops.
+ * loops. Be aware each edge must be ordered by vertices, the left vertex should
+ * have id less than the id of the right vertex.
  *
  * @author Akis Papadopoulos
  */
