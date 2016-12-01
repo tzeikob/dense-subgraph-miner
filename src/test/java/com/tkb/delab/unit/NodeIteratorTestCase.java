@@ -72,8 +72,6 @@ public class NodeIteratorTestCase extends TriangulationTestCase {
         int size = wheel.getNumberOfTriangles();
 
         THashSet triangles = triangulator.list(edges);
-        
-        System.out.println(triangles.size());
 
         assertTrue("Graph " + wheel + " should have " + size + " triangles.", triangles.size() == size);
     }
