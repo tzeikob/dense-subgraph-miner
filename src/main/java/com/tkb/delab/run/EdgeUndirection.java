@@ -54,6 +54,7 @@ public class EdgeUndirection extends Configured implements Tool {
         // Setting configuration parameters
         Configuration conf = this.getConf();
 
+        conf.set("mapred.textoutputformat.separator", ",");
         conf.set("input.text.delimiter", args[1]);
         conf.set("disjoint.partitions.number", args[2]);
 
