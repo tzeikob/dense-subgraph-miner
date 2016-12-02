@@ -44,7 +44,7 @@ public class EdgeUndirection extends Configured implements Tool {
         if (args.length != 5) {
             logger.error("Unable to run sprint job entry " + name + " with args " + Arrays.asList(args));
             logger.error("Please check the documentation, https://github.com/tzeikob/dense-subgraph-miner");
-            logger.error("Usage: hadoop jar [genericOptions] <jar-file> " + name + " <input> <delimiter> <rho> <tasks> <output>\n");
+            logger.error("Usage: hadoop jar <jar-file> " + name + " [genericOptions] <input> <delimiter> <rho> <tasks> <output>\n");
 
             ToolRunner.printGenericCommandUsage(System.err);
 

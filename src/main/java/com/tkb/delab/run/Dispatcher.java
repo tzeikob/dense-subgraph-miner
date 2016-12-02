@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A hadoop dispatcher of map reduce executable sprint jobs.
  *
- * Run as: hadoop jar [genericOptions] <jar-file> <job-entry> <args>
+ * Run as: hadoop jar <jar-file> <job-entry> [genericOptions] <args>
  *
  * @author Akis Papadopoulos
  */
@@ -29,7 +29,7 @@ public class Dispatcher {
 
     public static void main(String[] args) throws Exception {
         // Printing the license notice
-        System.out.println("\nCopyright 2016 Akis Papadopoulos, github.com/tzeikob\n");
+        System.out.println("\nCopyright 2016 Akis Papadopoulos, https://github.com/tzeikob/dense-subgraph-miner\n");
         System.out.println("Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this");
         System.out.println("file except in compliance with the License. You may obtain a copy of the License at \n");
         System.out.println("http://www.apache.org/licenses/LICENSE-2.0 \n");
@@ -54,7 +54,7 @@ public class Dispatcher {
             logger.error(exc.getMessage());
             logger.error("Unable to run sprint job entry with args " + Arrays.asList(args));
             logger.error("Please check the documentation, https://github.com/tzeikob/dense-subgraph-miner");
-            logger.error("Usage: hadoop jar [genericOptions] <jar-file> <job-entry> <args>\n");
+            logger.error("Usage: hadoop jar <jar-file> <job-entry> [genericOptions] <args>\n");
 
             ToolRunner.printGenericCommandUsage(System.err);
 
