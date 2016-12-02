@@ -12,8 +12,8 @@ import gnu.trove.set.hash.THashSet;
 public interface Enumerator {
 
     /**
-     * An abstract method enumerating subgraphs induced by an edge set,
-     * subgraphs mapped with an identifier number.
+     * A method enumerating subgraphs induced by an edge set, subgraphs mapped
+     * with an identifier number.
      *
      * @param edges a set of edges.
      * @return the list of subgraphs induced by edges within edge set.

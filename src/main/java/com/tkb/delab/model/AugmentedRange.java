@@ -7,8 +7,7 @@ package com.tkb.delab.model;
  * @author Akis Papadopoulos
  */
 public class AugmentedRange extends Range {
-
-    //Support value
+    
     public int support;
 
     /**

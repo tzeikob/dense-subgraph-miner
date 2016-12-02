@@ -7,10 +7,10 @@ package com.tkb.delab.model;
  */
 public enum Counter {
 
-    //Number of edges not converged to an optimal valid lambda bound
+    // Number of edges not converged to an optimal valid lambda bound
     UNCONVERGED_EDGES,
-    //Number of edges converged to an optimal valid lambda bound
+    // Number of edges converged to an optimal valid lambda bound
     CONVERGED_EDGES,
-    //Total sum of the lambda each edge has
+    // Total sum of the lambda each edge has
     SUM_OF_LAMBDA
 }

@@ -6,10 +6,9 @@ package com.tkb.delab.model;
  * @author Akis Papadopoulos
  */
 public class Edge {
-
-    //First vertex
+    
     public int v;
-    //Second vertex
+    
     public int u;
 
     /**
@@ -19,10 +18,7 @@ public class Edge {
      * @param u the second vertex.
      */
     public Edge(int v, int u) {
-        //Setting the first vertex
         this.v = v;
-
-        //Setting the second vertex
         this.u = u;
     }
 
@@ -30,7 +26,6 @@ public class Edge {
      * A method ordering the vertices by id within the edge in ascending order.
      */
     public void sort() {
-        //Ordering vertices by id in ascending order
         if (u < v) {
             int t = v;
             v = u;
@@ -46,10 +41,8 @@ public class Edge {
      */
     @Override
     public boolean equals(Object object) {
-        //Casting the object to an edge
         Edge other = (Edge) object;
-
-        //Checking if the end vertices are equal
+        
         if (this.v == other.v && this.u == other.u) {
             return true;
         } else {

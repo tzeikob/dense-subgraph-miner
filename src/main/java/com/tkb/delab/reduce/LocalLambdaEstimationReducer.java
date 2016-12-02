@@ -35,60 +35,60 @@ public class LocalLambdaEstimationReducer extends Reducer<Triple, Pair, Triple, 
      */
     @Override
     public void reduce(Triple key, Iterable<Pair> values, Context context) throws IOException, InterruptedException {
-        //Getting the list iterator
+        // Getting the list iterator
         Iterator<Pair> it = values.iterator();
 
-        //Creating an empty edge set
+        // Creating an empty edge set
         THashSet<Edge> edges = new THashSet<Edge>();
 
-        //Iterating through the pairs list
+        // Iterating through the pairs list
         while (it.hasNext()) {
-            //Getting the next pair
+            // Getting the next pair
             Pair pair = it.next();
 
-            //Adding the edge into the edge set
+            // Adding the edge into the edge set
             edges.add(new Edge(pair.v, pair.u));
         }
 
-        //Creating a forward tringulator
+        // Creating a forward tringulator
         Triangulator forward = new Forward();
 
-        //Listing all sorted triangles within
+        // Listing all sorted triangles within
         THashSet<Triangle> triangles = forward.list(edges);
 
-        //Creating an edge density estimator
+        // Creating an edge density estimator
         EdgeDensityEstimator estimator = new BinaryEstimator(50);
 
-        //Estimating density of each edge
+        // Estimating density of each edge
         THashMap<Edge, AugmentedRange> emap = estimator.estimate(triangles);
 
-        //Iterating through each triangle
+        // Iterating through each triangle
         for (Triangle t : triangles) {
-            //Getting the first edge
+            // Getting the first edge
             Edge e1 = new Edge(t.v, t.u);
 
-            //Getting the lambda estimation of the edge
+            // Getting the lambda estimation of the edge
             int lambda1 = emap.get(e1).upper;
 
-            //Emitting the triangle followed by the first edge augmented by its lambda bounds
+            // Emitting the triangle followed by the first edge augmented by its lambda bounds
             context.write(new Triple(t.v, t.u, t.w), new Quad(t.v, t.u, lambda1, lambda1));
 
-            //Getting the second edge
+            // Getting the second edge
             Edge e2 = new Edge(t.u, t.w);
 
-            //Getting the lambda estimation of the edge
+            // Getting the lambda estimation of the edge
             int lambda2 = emap.get(e2).upper;
 
-            //Emitting the triangle followed by the second edge augmented by its lambda bounds
+            // Emitting the triangle followed by the second edge augmented by its lambda bounds
             context.write(new Triple(t.v, t.u, t.w), new Quad(t.u, t.w, lambda2, lambda2));
 
-            //Getting the third edge
+            // Getting the third edge
             Edge e3 = new Edge(t.v, t.w);
 
-            //Getting the lambda estimation of the edge
+            // Getting the lambda estimation of the edge
             int lambda3 = emap.get(e3).upper;
 
-            //Emitting the triangle followed by the third edge augmented by its lambda bounds
+            // Emitting the triangle followed by the third edge augmented by its lambda bounds
             context.write(new Triple(t.v, t.u, t.w), new Quad(t.v, t.w, lambda3, lambda3));
         }
     }

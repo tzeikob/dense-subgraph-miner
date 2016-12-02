@@ -53,275 +53,274 @@ public class LambdaEstimation extends Configured implements Tool {
      */
     @Override
     public int run(String[] args) throws Exception {
-        //Checking for the completion of the arguments
         if (args.length != 5) {
             System.err.printf("Usage: %s [generic options] <input> <rho> <iterations> <tasks> <mode>\n", this.getClass().getSimpleName());
             ToolRunner.printGenericCommandUsage(System.err);
             return -1;
         }
 
-        //Creating a simple date formatter
+        // Creating a simple date formatter
         SimpleDateFormat dater = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
 
-        //Creating a simple float number formatter
+        // Creating a simple float number formatter
         DecimalFormat decimaler = new DecimalFormat(".###");
 
-        //Getting the configuration
+        // Getting the configuration
         Configuration conf = this.getConf();
 
-        //Setting the key-value separator character, default is tab
+        // Setting the key-value separator character, default is tab
         conf.set("mapred.textoutputformat.separator", ",");
 
-        //Setting the number of disjoint vertex partitions
+        // Setting the number of disjoint vertex partitions
         conf.set("dataset.vertexset.rho", args[1]);
 
-        //Setting the lambda search mode
+        // Setting the lambda search mode
         conf.set("lambda.search.mode", args[4]);
 
-        //Storing the exit code returned by each job
+        // Storing the exit code returned by each job
         int exitCode = 0;
 
         try {
-            //Creating the local triangulation job
+            // Creating the local triangulation job
             Job tri = new Job(conf, "tri");
             tri.setJarByClass(LambdaEstimation.class);
 
-            //Setting the mapper class and the output key-value pair
+            // Setting the mapper class and the output key-value pair
             tri.setMapperClass(EdgePartitioningMapper.class);
             tri.setMapOutputKeyClass(Triple.class);
             tri.setMapOutputValueClass(Pair.class);
 
-            //Setting the reducer class and output key-value pair
+            // Setting the reducer class and output key-value pair
             tri.setReducerClass(LocalTriangulationReducer.class);
             tri.setOutputKeyClass(Triple.class);
             tri.setOutputValueClass(Pair.class);
 
-            //Setting the number of reducer tasks
+            // Setting the number of reducer tasks
             tri.setNumReduceTasks(Integer.parseInt(args[3]));
 
-            //Setting the input and output file format
+            // Setting the input and output file format
             tri.setInputFormatClass(TextInputFormat.class);
             tri.setOutputFormatClass(TextOutputFormat.class);
 
-            //Setting the input path of the files, in hdfs
+            // Setting the input path of the files, in hdfs
             FileInputFormat.addInputPath(tri, new Path(args[0]));
 
-            //Setting the output path, in hdfs as input to the next phase
+            // Setting the output path, in hdfs as input to the next phase
             FileOutputFormat.setOutputPath(tri, new Path("out/miner/est/tri/"));
 
-            //OUT
+            // OUT
             for (int i = 0; i < 60; i++) {
                 System.out.print((char) 8226 + " ");
             }
             System.out.println();
             System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: local triangulation sprint started");
-            //OUT
+            // OUT
 
-            //Storing the starting time of the process
+            // Storing the starting time of the process
             long start = System.currentTimeMillis();
 
-            //Run the job and wait for completion
+            // Run the job and wait for completion
             exitCode = tri.waitForCompletion(true) ? 0 : 1;
 
-            //Checking for an abnormal exit code
+            // Checking for an abnormal exit code
             if (exitCode != 0) {
-                //Throwing an exception
+                // Throwing an exception
                 throw new AbnormalExitException("An abnormal exit exception occurred at local triangulation sprint");
             }
 
-            //OUT
+            // OUT
             System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: local triangulation sprint finished");
-            //OUT
+            // OUT
 
-            //Creating the lambda bounding job
+            // Creating the lambda bounding job
             Job bnd = new Job(conf, "bnd");
             bnd.setJarByClass(LambdaEstimation.class);
 
-            //Setting the mapper class and the output key-value pair
+            // Setting the mapper class and the output key-value pair
             bnd.setMapperClass(LambdaBoundingMapper.class);
             bnd.setMapOutputKeyClass(Pair.class);
             bnd.setMapOutputValueClass(Triple.class);
 
-            //Setting the reducer class and output key-value pair
+            // Setting the reducer class and output key-value pair
             bnd.setReducerClass(LambdaBoundingReducer.class);
             bnd.setOutputKeyClass(Triple.class);
             bnd.setOutputValueClass(Quad.class);
 
-            //Setting the number of reducer tasks
+            // Setting the number of reducer tasks
             bnd.setNumReduceTasks(Integer.parseInt(args[3]));
 
-            //Setting the input and output file format
+            // Setting the input and output file format
             bnd.setInputFormatClass(TextInputFormat.class);
             bnd.setOutputFormatClass(TextOutputFormat.class);
 
-            //Setting the input path produced by the trinagulation process
+            // Setting the input path produced by the trinagulation process
             FileInputFormat.addInputPath(bnd, new Path("out/miner/est/tri/"));
 
-            //Setting the output path, in hdfs as input to the next phase
+            // Setting the output path, in hdfs as input to the next phase
             FileOutputFormat.setOutputPath(bnd, new Path("out/miner/est/lambda/"));
 
-            //OUT
+            // OUT
             for (int i = 0; i < 60; i++) {
                 System.out.print((char) 8226 + " ");
             }
             System.out.println();
             System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: lambda bounding sprint started");
-            //OUT
+            // OUT
 
-            //Run the job and wait for completion
+            // Run the job and wait for completion
             exitCode = bnd.waitForCompletion(true) ? 0 : 1;
 
-            //Checking for an abnormal exit code
+            // Checking for an abnormal exit code
             if (exitCode != 0) {
                 //Throwing an exception
                 throw new AbnormalExitException("An abnormal exit exception occurred at lambda bounding sprint");
             }
 
-            //OUT
+            // OUT
             System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: lambda bounding sprint finished");
-            //OUT
+            // OUT
 
-            //Deleting the previous triangulation output from the hdfs
+            // Deleting the previous triangulation output from the hdfs
             FileSystem.get(conf).delete(new Path("out/miner/est/tri/"), true);
 
-            //Setting the max iterations requested
+            // Setting the max iterations requested
             int max = Integer.parseInt(args[2]);
 
-            //Ititializaing the iterations counter
+            // Ititializaing the iterations counter
             int iterations = 0;
 
-            //Initializing the number of unconverged edges
+            // Initializing the number of unconverged edges
             long unconverged = Integer.MAX_VALUE;
 
-            //Iterating to find the optimal valid lambda upper bounds
+            // Iterating to find the optimal valid lambda upper bounds
             while (unconverged > 0 && iterations < max) {
-                //OUT
+                // OUT
                 for (int i = 0; i < 60; i++) {
                     System.out.print((char) 8226 + " ");
                 }
                 System.out.println();
                 System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: loop " + (iterations + 1) + " started");
-                //OUT
+                // OUT
 
-                //Creating the support job
+                // Creating the support job
                 Job sup = new Job(conf, "sup-" + (iterations + 1));
                 sup.setJarByClass(LambdaEstimation.class);
 
-                //Setting the mapper class and the output key-value pair
+                // Setting the mapper class and the output key-value pair
                 sup.setMapperClass(SupportComputationMapper.class);
                 sup.setMapOutputKeyClass(Triple.class);
                 sup.setMapOutputValueClass(Quad.class);
 
-                //Setting the reducer class and output key-value pair
+                // Setting the reducer class and output key-value pair
                 sup.setReducerClass(SupportComputationReducer.class);
                 sup.setOutputKeyClass(Pair.class);
                 sup.setOutputValueClass(Sequence.class);
 
-                //Setting the number of reducer tasks
+                // Setting the number of reducer tasks
                 sup.setNumReduceTasks(Integer.parseInt(args[3]));
 
-                //Setting the input and output file format
+                // Setting the input and output file format
                 sup.setInputFormatClass(TextInputFormat.class);
                 sup.setOutputFormatClass(TextOutputFormat.class);
 
-                //Setting the input path of the files, in hdfs
+                // Setting the input path of the files, in hdfs
                 FileInputFormat.addInputPath(sup, new Path("out/miner/est/lambda/"));
 
-                //Deleting the previous stored support output from hdfs
+                // Deleting the previous stored support output from hdfs
                 FileSystem.get(conf).delete(new Path("out/miner/est/sup/"), true);
 
-                //Setting the output path, in hdfs as input to the next phase
+                // Setting the output path, in hdfs as input to the next phase
                 FileOutputFormat.setOutputPath(sup, new Path("out/miner/est/sup/"));
 
-                //OUT
+                // OUT
                 System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: support computation sprint started");
-                //OUT
+                // OUT
 
-                //Run the job and wait for completion
+                // Run the job and wait for completion
                 exitCode = sup.waitForCompletion(true) ? 0 : 1;
 
-                //Checking for an abnormal exit code
+                // Checking for an abnormal exit code
                 if (exitCode != 0) {
-                    //Throwing an exception
+                    // Throwing an exception
                     throw new AbnormalExitException("An abnormal exit exception occurred in loop " + (iterations + 1) + " at support computation sprint");
                 }
 
-                //OUT
+                // OUT
                 System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: support computation sprint finished");
-                //OUT
+                // OUT
 
-                //Creating the binray search job
+                // Creating the binray search job
                 Job sea = new Job(conf, "sea-" + (iterations + 1));
                 sea.setJarByClass(LambdaEstimation.class);
 
-                //Setting the mapper class and the output key-value pair
+                // Setting the mapper class and the output key-value pair
                 sea.setMapperClass(SearchMapper.class);
                 sea.setMapOutputKeyClass(Pair.class);
                 sea.setMapOutputValueClass(Sequence.class);
 
-                //Setting the reducer class and output key-value pair
+                // Setting the reducer class and output key-value pair
                 sea.setReducerClass(SearchReducer.class);
                 sea.setOutputKeyClass(Triple.class);
                 sea.setOutputValueClass(Quad.class);
 
-                //Setting the number of reducer tasks
+                // Setting the number of reducer tasks
                 sea.setNumReduceTasks(Integer.parseInt(args[3]));
 
-                //Setting the input and output file format
+                // Setting the input and output file format
                 sea.setInputFormatClass(TextInputFormat.class);
                 sea.setOutputFormatClass(TextOutputFormat.class);
 
-                //Setting the input path of the files, in hdfs
+                // Setting the input path of the files, in hdfs
                 FileInputFormat.addInputPath(sea, new Path("out/miner/est/sup/"));
 
-                //Deleting the previous search output from the hdfs
+                // Deleting the previous search output from the hdfs
                 FileSystem.get(conf).delete(new Path("out/miner/est/lambda/"), true);
 
-                //Setting the output path, in hdfs as input to the next phase
+                // Setting the output path, in hdfs as input to the next phase
                 FileOutputFormat.setOutputPath(sea, new Path("out/miner/est/lambda/"));
 
-                //OUT
+                // OUT
                 System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: binary search sprint started");
-                //OUT
+                // OUT
 
-                //Run the job and wait for completion
+                // Run the job and wait for completion
                 exitCode = sea.waitForCompletion(true) ? 0 : 1;
 
-                //Checking for an abnormal exit code
+                // Checking for an abnormal exit code
                 if (exitCode != 0) {
-                    //Throwing an exception
+                    // Throwing an exception
                     throw new AbnormalExitException("An abnormal exit exception occurred in loop " + (iterations + 1) + " at binary search sprint");
                 }
 
-                //Getting the number of unconverged edges
+                // Getting the number of unconverged edges
                 unconverged = sea.getCounters().findCounter(Counter.UNCONVERGED_EDGES).getValue();
 
-                //Getting the total lambda sum
+                // Getting the total lambda sum
                 //long sum = sea.getCounters().findCounter(Counter.SUM_OF_LAMBDA).getValue();
 
-                //Getting the total edges participates atleast in a triangle
+                // Getting the total edges participates atleast in a triangle
                 //long m = bnd.getCounters().findCounter("org.apache.hadoop.mapred.Task$Counter", "REDUCE_INPUT_GROUPS").getValue();
 
-                //OUT
+                // OUT
                 System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: binary search sprint finished");
                 if (unconverged > 0) {
                     System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: loop " + (iterations + 1) + " finished with " + unconverged + " unconverged edges"); // and " + decimaler.format((double) sum / m) + " average lambda");
                 } else {
                     System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: process converged after " + (iterations + 1) + " loops"); // with " + decimaler.format((double) sum / m) + " average lambda");
                 }
-                //OUT
+                // OUT
 
-                //Updating the iterations counter
+                // Updating the iterations counter
                 iterations++;
             }
 
-            //Storing the finish time of the process
+            // Storing the finish time of the process
             long end = System.currentTimeMillis();
 
-            //Deleting the final not needed support output from the hdfs
+            // Deleting the final not needed support output from the hdfs
             FileSystem.get(conf).delete(new Path("out/miner/est/sup/"), true);
 
-            //OUT
+            // OUT
             System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: process finished successfuly");
             System.out.printf("%-10s %s\n", "Input", args[0]);
             System.out.printf("%-10s %s\n", "Rho", args[1]);
@@ -330,16 +329,16 @@ public class LambdaEstimation extends Configured implements Tool {
             System.out.printf("%-10s %s\n", "Mode", args[4]);
             System.out.printf("%-10s %s\n", "Ellapsed", decimaler.format(((double) (end - start) / 1000 / 60)) + " Min (" + (end - start) + " msec)");
             System.out.printf("%-10s %s\n", "Output", "out/miner/est/lambda/");
-            //OUT
+            // OUT
         } catch (AbnormalExitException ex) {
-            //Cleaning the hdfs
+            // Cleaning the hdfs
             FileSystem.get(conf).delete(new Path("out/miner/est/"), true);
 
-            //OUT
+            // OUT
             System.out.println(dater.format(new Date()) + " INFO miner.sprints.LambdaEstimationSprint: " + ex.getMessage());
-            //OUT
+            // OUT
 
-            //Returning from abnormal exit
+            // Returning from abnormal exit
             return exitCode;
         }
 

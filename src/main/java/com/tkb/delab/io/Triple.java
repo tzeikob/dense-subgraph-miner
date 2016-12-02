@@ -11,12 +11,11 @@ import org.apache.hadoop.io.WritableComparable;
  * @author Akis Papadopoulos
  */
 public class Triple implements WritableComparable<Triple> {
-
-    //First element value
+    
     public int v;
-    //Second element value
+    
     public int u;
-    //Third element value
+    
     public int w;
 
     /**
@@ -70,7 +69,6 @@ public class Triple implements WritableComparable<Triple> {
      */
     @Override
     public boolean equals(Object object) {
-        //Casting the object to triple
         Triple other = (Triple) object;
 
         return this.v == other.v && this.u == other.u && this.w == other.w;
@@ -87,11 +85,8 @@ public class Triple implements WritableComparable<Triple> {
      */
     @Override
     public int compareTo(Triple other) {
-        //Checking the first element
         if (this.v == other.v) {
-            //Checking the second elements
             if (this.u == other.u) {
-                //Checking the thrid elements
                 if (this.w < other.w) {
                     return 1;
                 } else if (this.w > other.w) {

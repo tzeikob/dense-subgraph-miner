@@ -6,12 +6,11 @@ package com.tkb.delab.model;
  * @author Akis Papadopoulos
  */
 public class Triangle {
-
-    //First vertex
+    
     public int v;
-    //Second vertex
+    
     public int u;
-    //Third vertex
+    
     public int w;
 
     /**
@@ -22,13 +21,8 @@ public class Triangle {
      * @param w the third vertex.
      */
     public Triangle(int v, int u, int w) {
-        //Setting the first vertex
         this.v = v;
-
-        //Setting the second vertex
         this.u = u;
-
-        //Setting the third vertex
         this.w = w;
     }
 
@@ -37,10 +31,23 @@ public class Triangle {
      * order.
      */
     public void sort() {
-        //Sorting vertices by id in ascending order
-        if (u < v) {int t = u; u = v; v = t;}
-        if (w < u) {int t = w; w = u; u = t;}        
-        if (u < v) {int t = u; u = v; v = t;}
+        if (u < v) {
+            int t = u;
+            u = v;
+            v = t;
+        }
+        
+        if (w < u) {
+            int t = w;
+            w = u;
+            u = t;
+        }
+        
+        if (u < v) {
+            int t = u;
+            u = v;
+            v = t;
+        }
     }
 
     /**
@@ -51,10 +58,8 @@ public class Triangle {
      */
     @Override
     public boolean equals(Object object) {
-        //Casting the object to a triangle
         Triangle other = (Triangle) object;
-
-        //Checking if the end vertices are equal
+        
         if (this.v == other.v && this.u == other.u && this.w == other.w) {
             return true;
         } else {

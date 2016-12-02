@@ -24,31 +24,31 @@ public class EdgeHashingMapper extends Mapper<LongWritable, Text, Triple, Quad> 
      */
     @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        //Getting the value as a raw line
+        // Getting the value as a raw line
         String line = value.toString();
 
-        //Extracting all the tokens within this line
+        // Extracting all the tokens within this line
         String[] tokens = line.split(",");
 
-        //Setting the triangle first vertex
+        // Setting the triangle first vertex
         int v = Integer.parseInt(tokens[0]);
 
-        //Setting the triangle second vertex
+        // Setting the triangle second vertex
         int u = Integer.parseInt(tokens[1]);
 
-        //Setting the triangle third vertex
+        // Setting the triangle third vertex
         int w = Integer.parseInt(tokens[2]);
 
-        //Setting the edge first vertex
+        // Setting the edge first vertex
         int ev = Integer.parseInt(tokens[3]);
 
-        //Setting the edge second vertex
+        // Setting the edge second vertex
         int eu = Integer.parseInt(tokens[4]);
 
-        //Setting the edge lambda bound
+        // Setting the edge lambda bound
         int lambda = Integer.parseInt(tokens[6]);
 
-        //Emitting the triangle follwoed by the edge augmented by its lambda bounds
+        // Emitting the triangle follwoed by the edge augmented by its lambda bounds
         context.write(new Triple(v, u, w), new Quad(ev, eu, lambda, lambda));
     }
 }

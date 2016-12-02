@@ -11,10 +11,9 @@ import org.apache.hadoop.io.WritableComparable;
  * @author Akis Papadopoulos
  */
 public class Pair implements WritableComparable<Pair> {
-
-    //First element value
+    
     public int v;
-    //Second element value
+    
     public int u;
 
     /**
@@ -64,7 +63,6 @@ public class Pair implements WritableComparable<Pair> {
      */
     @Override
     public boolean equals(Object object) {
-        //Casting the object to pair
         Pair other = (Pair) object;
 
         return this.v == other.v && this.u == other.u;
@@ -80,9 +78,7 @@ public class Pair implements WritableComparable<Pair> {
      */
     @Override
     public int compareTo(Pair other) {
-        //Checking the first element
         if (this.v == other.v) {
-            //Checking the second elements
             if (this.u < other.u) {
                 return 1;
             } else if (this.u > other.u) {

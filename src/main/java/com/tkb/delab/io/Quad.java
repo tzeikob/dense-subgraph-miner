@@ -11,14 +11,13 @@ import org.apache.hadoop.io.WritableComparable;
  * @author Akis Papadopoulos
  */
 public class Quad implements WritableComparable<Quad> {
-
-    //First element value
+    
     public int v;
-    //Second element value
+    
     public int u;
-    //Third element value
+    
     public int w;
-    //Forth element value
+    
     public int z;
 
     /**
@@ -76,7 +75,6 @@ public class Quad implements WritableComparable<Quad> {
      */
     @Override
     public boolean equals(Object object) {
-        //Casting the object to triple
         Quad other = (Quad) object;
 
         return this.v == other.v && this.u == other.u && this.w == other.w && this.z == other.z;
@@ -93,13 +91,9 @@ public class Quad implements WritableComparable<Quad> {
      */
     @Override
     public int compareTo(Quad other) {
-        //Checking the first element
         if (this.v == other.v) {
-            //Checking the second elements
             if (this.u == other.u) {
-                //Checking the thrid elements
                 if (this.w == other.w) {
-                    //Checking the forth elements
                     if (this.z < other.z) {
                         return 1;
                     } else if (this.z > other.z) {

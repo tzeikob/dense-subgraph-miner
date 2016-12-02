@@ -32,41 +32,41 @@ public class SubgraphEnumerationReducer extends Reducer<IntWritable, Pair, Text,
      */
     @Override
     public void reduce(IntWritable key, Iterable<Pair> values, Context context) throws IOException, InterruptedException {
-        //Getting the list iterator
+        // Getting the list iterator
         Iterator<Pair> it = values.iterator();
 
-        //Creating an empty hashset of unique edges
+        // Creating an empty hashset of unique edges
         THashSet<Edge> edges = new THashSet<Edge>();
 
-        //Iterating through the list of edges
+        // Iterating through the list of edges
         while (it.hasNext()) {
-            //Getting the next edge
+            // Getting the next edge
             Pair pair = it.next();
 
-            //Adding next edge into hashset
+            // Adding next edge into hashset
             edges.add(new Edge(pair.v, pair.u));
         }
 
-        //Creating a naive subgraph enumerator
+        // Creating a naive subgraph enumerator
         Enumerator naive = new NaiveEnumerator();
 
-        //Enumerating each connected subgraph within edge set
+        // Enumerating each connected subgraph within edge set
         TIntObjectHashMap<THashSet<Edge>> subgraphs = naive.enumerate(edges);
 
-        //Getting the iterator
+        // Getting the iterator
         TIntObjectIterator<THashSet<Edge>> sit = subgraphs.iterator();
 
-        //Iterating through subgraph list
+        // Iterating through subgraph list
         while (sit.hasNext()) {
-            //Getting the next subgraph's id
+            // Getting the next subgraph's id
             int id = sit.key();
 
-            //Getting the edge set subgraph induced by
+            // Getting the edge set subgraph induced by
             THashSet<Edge> edgeset = sit.value();
 
-            //Iterating through the edge set
+            // Iterating through the edge set
             for (Edge edge : edgeset) {
-                //Emitting the next edge keyed by the lambda value followed by the subgraph id
+                // Emitting the next edge keyed by the lambda value followed by the subgraph id
                 context.write(new Text(key + "," + id), new Pair(edge.v, edge.u));
             }
         }

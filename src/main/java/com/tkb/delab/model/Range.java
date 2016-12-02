@@ -7,9 +7,8 @@ package com.tkb.delab.model;
  */
 public class Range {
     
-    //Lower bound value
     public int lower;
-    //Upper bound value
+    
     public int upper;
 
     /**

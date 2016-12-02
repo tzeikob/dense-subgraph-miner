@@ -12,7 +12,7 @@ import gnu.trove.set.hash.THashSet;
 public interface Triangulator {
 
     /**
-     * An abstract method listing all triangles within a graph represented by a
+     * A method listing all triangles within a graph represented by a
      * given edge set.
      *
      * @param edges edge set graph induced by.

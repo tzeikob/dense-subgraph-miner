@@ -28,30 +28,30 @@ public class LocalTriangulationReducer extends Reducer<Triple, Pair, Triple, Pai
      */
     @Override
     public void reduce(Triple key, Iterable<Pair> values, Context context) throws IOException, InterruptedException {
-        //Getting the list iterator
+        // Getting the list iterator
         Iterator<Pair> it = values.iterator();
 
-        //Creating an empty edge set
+        // Creating an empty edge set
         THashSet<Edge> edges = new THashSet<Edge>();
 
-        //Iterating through the pairs list
+        // Iterating through the pairs list
         while (it.hasNext()) {
-            //Getting the next pair
+            // Getting the next pair
             Pair pair = it.next();
 
-            //Adding the edge into the edge set
+            // Adding the edge into the edge set
             edges.add(new Edge(pair.v, pair.u));
         }
 
-        //Creating a forward tringulator
+        // Creating a forward tringulator
         Triangulator forward = new Forward();
 
-        //Listing all sorted triangles within
+        // Listing all sorted triangles within
         THashSet<Triangle> triangles = forward.list(edges);
 
-        //Iterating through each triangle
+        // Iterating through each triangle
         for (Triangle t : triangles) {
-            //Emitting next triangle
+            // Emitting next triangle
             context.write(new Triple(t.v, t.u, t.w), null);
         }
     }

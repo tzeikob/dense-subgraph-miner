@@ -24,28 +24,28 @@ public class LambdaCrosscheckReducer extends Reducer<Pair, Pair, Pair, Text> {
      */
     @Override
     public void reduce(Pair key, Iterable<Pair> values, Context context) throws IOException, InterruptedException {
-        //Getting the list iterator
+        // Getting the list iterator
         Iterator<Pair> it = values.iterator();
 
-        //Creating an empty hash map of lambda estimation values per method
+        // Creating an empty hash map of lambda estimation values per method
         TIntIntHashMap lambdas = new TIntIntHashMap();
 
-        //Iterating through the list of pairs
+        // Iterating through the list of pairs
         while (it.hasNext()) {
-            //Getting the next pair
+            // Getting the next pair
             Pair pair = it.next();
 
-            //Getting the lambda value
+            // Getting the lambda value
             int lambda = pair.v;
 
-            //Getting the lambda estimation method markup
+            // Getting the lambda estimation method markup
             int method = pair.u;
 
-            //Hashing the lambda into the map
+            // Hashing the lambda into the map
             lambdas.put(method, lambda);
         }
 
-        //Emitting the edge followed by the lambda metadata values for each method
+        // Emitting the edge followed by the lambda metadata values for each method
         context.write(new Pair(key.v, key.u), new Text(lambdas.get(0) + ","
                 + lambdas.get(1) + ","
                 + lambdas.get(2) + ","

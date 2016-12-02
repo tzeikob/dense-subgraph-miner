@@ -9,7 +9,7 @@ package com.tkb.delab.util;
 public interface Generator {
 
     /**
-     * An abstract method generates numbers taking into account the limit.
+     * A method generates numbers taking into account the limit.
      *
      * @param limit a limit bounding a range of possible numbers.
      * @return an integer number.

@@ -26,105 +26,105 @@ public class NodeIterator implements Triangulator {
      */
     @Override
     public THashSet<Triangle> list(THashSet<Edge> edges) {
-        //Creating an empty set of triangles
+        // Creating an empty set of triangles
         THashSet<Triangle> triangles = new THashSet<Triangle>();
 
-        //Creating an empty vertex neighborhood map
+        // Creating an empty vertex neighborhood map
         TIntObjectHashMap<TIntHashSet> n = new TIntObjectHashMap<TIntHashSet>();
 
-        //Getting the edge set iterator
+        // Getting the edge set iterator
         TObjectHashIterator eit = edges.iterator();
 
-        //Iterating through the edge set
+        // Iterating through the edge set
         while (eit.hasNext()) {
-            //Getting the next edge
+            // Getting the next edge
             Edge e = (Edge) eit.next();
 
-            //Getting the first vertex
+            // Getting the first vertex
             int v = e.v;
 
-            //Getting the second vertex
+            // Getting the second vertex
             int u = e.u;
 
-            //Checking if the first vertex mapped already
+            // Checking if the first vertex mapped already
             if (n.contains(v)) {
-                //Adding it's next neighbor
+                // Adding it's next neighbor
                 n.get(v).add(u);
             } else {
-                //Creating an empty set of neighbors
+                // Creating an empty set of neighbors
                 TIntHashSet set = new TIntHashSet();
 
-                //Adding it's next neighbor
+                // Adding it's next neighbor
                 set.add(u);
 
-                //Mapping the vertex into the neighborhood map
+                // Mapping the vertex into the neighborhood map
                 n.put(v, set);
             }
 
-            //Checking if the second vertex mapped already
+            // Checking if the second vertex mapped already
             if (n.contains(u)) {
-                //Adding it's next neighbor
+                // Adding it's next neighbor
                 n.get(u).add(v);
             } else {
-                //Creating an empty set of neighbors
+                // Creating an empty set of neighbors
                 TIntHashSet set = new TIntHashSet();
 
-                //Adding it's next neighbor
+                // Adding it's next neighbor
                 set.add(v);
 
-                //Mapping the vertex into the neighborhood map
+                // Mapping the vertex into the neighborhood map
                 n.put(u, set);
             }
         }
 
-        //Getting the vertex set
+        // Getting the vertex set
         int[] vertices = n.keys();
 
-        //Iterating through the vertex set
+        // Iterating through the vertex set
         for (int i = 0; i < vertices.length; i++) {
-            //Getting the next vertex
+            // Getting the next vertex
             int v = vertices[i];
 
-            //Getting the neighborhood of the vertex
+            // Getting the neighborhood of the vertex
             int[] nv = n.get(v).toArray();
 
-            //Getting the degree of the vertex
+            // Getting the degree of the vertex
             int dv = nv.length;
 
-            //Iterating through all possible vertex neighbor pairs
+            // Iterating through all possible vertex neighbor pairs
             for (int j = 0; j < nv.length; j++) {
-                //Getting the next neighbor
+                // Getting the next neighbor
                 int u = nv[j];
 
-                //Getting the degree of the vertex
+                // Getting the degree of the vertex
                 int du = n.get(u).size();
 
-                //Checking vertices by degree
+                // Checking vertices by degree
                 if (du > dv || (du == dv && v < u)) {
                     for (int k = 0; k < nv.length; k++) {
-                        //Getting the next neighbor
+                        // Getting the next neighbor
                         int w = nv[k];
 
-                        //Getting the degree of the vertex
+                        // Getting the degree of the vertex
                         int dw = n.get(w).size();
 
-                        //Checking vertices by degree
+                        // Checking vertices by degree
                         if (dw > du || (dw == du && u < w)) {
-                            //Creating the edge iinduced by the found vertex pair
+                            // Creating the edge iinduced by the found vertex pair
                             Edge edge = new Edge(u, w);
 
-                            //Sorting edge vertices
+                            // Sorting edge vertices
                             edge.sort();
 
-                            //Checking if the edge exist
+                            // Checking if the edge exist
                             if (edges.contains(edge)) {
-                                //Creating the found triangle
+                                // Creating the found triangle
                                 Triangle triangle = new Triangle(v, u, w);
 
-                                //Sorting the triangle
+                                // Sorting the triangle
                                 triangle.sort();
 
-                                //Adding the triangle into the set
+                                // Adding the triangle into the set
                                 triangles.add(triangle);
                             }
                         }

@@ -8,9 +8,8 @@ package com.tkb.delab.model;
  */
 public class LambdaEdge extends Edge {
 
-    //Lower lambda bound
     public int kappa;
-    //Upper lambda bound
+    
     public int lambda;
 
     /**
@@ -22,13 +21,9 @@ public class LambdaEdge extends Edge {
      * @param lambda the upper lambda bound.
      */
     public LambdaEdge(int v, int u, int kappa, int lambda) {
-        //Calling the constructor of the super class
         super(v, u);
-
-        //Setting the lower lambda bound
+        
         this.kappa = kappa;
-
-        //Setting the upper lambda bound
         this.lambda = lambda;
     }
 

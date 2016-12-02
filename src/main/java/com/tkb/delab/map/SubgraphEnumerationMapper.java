@@ -24,22 +24,22 @@ public class SubgraphEnumerationMapper extends Mapper<LongWritable, Text, IntWri
      */
     @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        //Getting the value as a raw line
+        // Getting the value as a raw line
         String line = value.toString();
 
-        //Extracting all the tokens within this line
+        // Extracting all the tokens within this line
         String[] tokens = line.split(",");
 
-        //Extracting the optimal lambda upper bound
+        // Extracting the optimal lambda upper bound
         int lambda = Integer.parseInt(tokens[0]);
 
-        //Setting the edge first vertex
+        // Setting the edge first vertex
         int v = Integer.parseInt(tokens[1]);
 
-        //Setting the edge second vertex
+        // Setting the edge second vertex
         int u = Integer.parseInt(tokens[2]);
 
-        //Emitting the lambda value followed by its edge
+        // Emitting the lambda value followed by its edge
         context.write(new IntWritable(lambda), new Pair(v, u));
     }
 }

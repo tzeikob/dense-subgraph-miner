@@ -25,121 +25,121 @@ public class NaiveEnumerator implements Enumerator {
      */
     @Override
     public TIntObjectHashMap<THashSet<Edge>> enumerate(THashSet<Edge> edges) {
-        //Creating an empty hashmap of subgraphs induced by an edge set
+        // Creating an empty hashmap of subgraphs induced by an edge set
         TIntObjectHashMap<THashSet<Edge>> subgraphs = new TIntObjectHashMap<THashSet<Edge>>();
 
-        //Initializing the first candidate subgraph id
+        // Initializing the first candidate subgraph id
         int next = 0;
 
-        //Getting the iterator of the edge set
+        // Getting the iterator of the edge set
         TObjectHashIterator<Edge> it = edges.iterator();
 
-        //Creating an empty hashset
+        // Creating an empty hashset
         THashSet<Edge> set = new THashSet<Edge>();
 
-        //Adding the first edge
+        // Adding the first edge
         set.add(it.next());
 
-        //Hashing the first edge in one-edge subgraph
+        // Hashing the first edge in one-edge subgraph
         subgraphs.put(next++, set);
 
-        //Iterating through the rest of the edge set
+        // Iterating through the rest of the edge set
         while (it.hasNext()) {
-            //Getting the next pivot edge
+            // Getting the next pivot edge
             Edge edge = it.next();
 
-            //Marking pivot edge as not added yet
+            // Marking pivot edge as not added yet
             boolean added = false;
 
-            //Creating an empty list of subgraph ids pivot edge anchored with 
+            // Creating an empty list of subgraph ids pivot edge anchored with 
             TIntHashSet ids = new TIntHashSet();
 
-            //Getting the subgrpahs iterator
+            // Getting the subgrpahs iterator
             TIntObjectIterator<THashSet<Edge>> sit = subgraphs.iterator();
 
-            //Iterating through the subgraphs
+            // Iterating through the subgraphs
             while (sit.hasNext()) {
-                //Getting the id of the next subgraph
+                // Getting the id of the next subgraph
                 int id = sit.key();
 
-                //Getting the edge set of the subgraph
+                // Getting the edge set of the subgraph
                 THashSet<Edge> edgeset = sit.value();
 
-                //Checking if pivot edge not contained within subgraph
+                // Checking if pivot edge not contained within subgraph
                 if (!edgeset.contains(edge)) {
-                    //Iterating through the edges within the subgraph
+                    // Iterating through the edges within the subgraph
                     for (Edge e : edgeset) {
-                        //Checking if the pivot edge anchored with the next edge
+                        // Checking if the pivot edge anchored with the next edge
                         if (e.v == edge.v || e.v == edge.u || e.u == edge.v || e.u == edge.u) {
-                            //Adding the subgraph id pivot edge anchored with
+                            // Adding the subgraph id pivot edge anchored with
                             ids.add(id);
 
-                            //Breaking the not needed iterations
+                            // Breaking the not needed iterations
                             break;
                         }
                     }
                 } else {
-                    //Marking the pivot edge as added
+                    // Marking the pivot edge as added
                     added = true;
 
-                    //Breaking the not needed iterations
+                    // Breaking the not needed iterations
                     break;
                 }
             }
 
-            //Checking if the pivot edge anchored with two subgraphs
+            // Checking if the pivot edge anchored with two subgraphs
             if (ids.size() > 1) {
-                //OPT
-                //Getting the id of the first subgraph
+                // OPT
+                // Getting the id of the first subgraph
                 int id1 = ids.toArray()[0];
 
-                //Getting the id of the second subgraph
+                // Getting the id of the second subgraph
                 int id2 = ids.toArray()[1];
 
-                //Getting the edge set of the first subgraph
+                // Getting the edge set of the first subgraph
                 THashSet<Edge> set1 = subgraphs.get(id1);
 
-                //Getting the edge set of the second subgraph
+                // Getting the edge set of the second subgraph
                 THashSet<Edge> set2 = subgraphs.get(id2);
 
-                //Merging the two subgraphs into one
+                // Merging the two subgraphs into one
                 set1.addAll(set2);
 
-                //Adding the pivot edge too
+                // Adding the pivot edge too
                 set1.add(edge);
 
-                //Removing the first subgraph from the hashmap
+                // Removing the first subgraph from the hashmap
                 subgraphs.remove(id1);
 
-                //Removing the second subgraph from the hashmap
+                // Removing the second subgraph from the hashmap
                 subgraphs.remove(id2);
 
-                //Hashing the new merged subgraph into the hashmap
+                // Hashing the new merged subgraph into the hashmap
                 subgraphs.put(next++, set1);
 
-                //Marking the pivot edge as added
+                // Marking the pivot edge as added
                 added = true;
-                //OPT
+                // OPT
             } else if (ids.size() == 1) {
-                //Getting the id of the subgraph pivot edge anchored with
+                // Getting the id of the subgraph pivot edge anchored with
                 int id = ids.toArray()[0];
 
-                //Adding the edge into the edge set of the subgraph
+                // Adding the edge into the edge set of the subgraph
                 subgraphs.get(id).add(edge);
 
-                //Marking the pivot edge as added
+                // Marking the pivot edge as added
                 added = true;
             }
 
-            //Checking if the pivot edge isn't added already
+            // Checking if the pivot edge isn't added already
             if (!added) {
-                //Creating an empty set
+                // Creating an empty set
                 THashSet<Edge> hashset = new THashSet<Edge>();
 
-                //Adding the pivot edge within
+                // Adding the pivot edge within
                 hashset.add(edge);
 
-                //Hashing the new one-edge subgraph within the hashmap
+                // Hashing the new one-edge subgraph within the hashmap
                 subgraphs.put(next++, hashset);
             }
         }

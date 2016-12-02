@@ -44,95 +44,94 @@ public class Crosscheck extends Configured implements Tool {
      */
     @Override
     public int run(String[] args) throws Exception {
-        //Checking for the completion of the arguments
         if (args.length != 2) {
             System.err.printf("Usage: %s [generic options] <input> <tasks>\n", this.getClass().getSimpleName());
             ToolRunner.printGenericCommandUsage(System.err);
             return -1;
         }
 
-        //Creating a simple date formatter
+        // Creating a simple date formatter
         SimpleDateFormat dater = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
 
-        //Creating a simple float number formatter
+        // Creating a simple float number formatter
         DecimalFormat decimaler = new DecimalFormat(".###");
 
-        //Getting the configuration
+        // Getting the configuration
         Configuration conf = this.getConf();
 
-        //Setting the key-value separator character, default is tab
+        // Setting the key-value separator character, default is tab
         conf.set("mapred.textoutputformat.separator", ",");
 
-        //Storing the exit code returned by each job
+        // Storing the exit code returned by each job
         int exitCode = 0;
 
         try {
-            //Creating the crosscheck job
+            // Creating the crosscheck job
             Job cch = new Job(conf, "cch");
             cch.setJarByClass(Crosscheck.class);
 
-            //Setting the mapper class and the output key-value pair
+            // Setting the mapper class and the output key-value pair
             cch.setMapperClass(LambdaCrosscheckMapper.class);
             cch.setMapOutputKeyClass(Pair.class);
             cch.setMapOutputValueClass(Pair.class);
 
-            //Setting the reducer class and output key-value pair
+            // Setting the reducer class and output key-value pair
             cch.setReducerClass(LambdaCrosscheckReducer.class);
             cch.setOutputKeyClass(Pair.class);
             cch.setOutputValueClass(Text.class);
 
-            //Setting the number of reduce tasks
+            // Setting the number of reduce tasks
             cch.setNumReduceTasks(Integer.parseInt(args[1]));
 
-            //Setting the input and output file format
+            // Setting the input and output file format
             cch.setInputFormatClass(TextInputFormat.class);
             cch.setOutputFormatClass(TextOutputFormat.class);
 
-            //Setting the input path of the files, in hdfs
+            // Setting the input path of the files, in hdfs
             FileInputFormat.addInputPath(cch, new Path(args[0]));
 
-            //Setting the output path, in hdfs as input to the next phase
+            // Setting the output path, in hdfs as input to the next phase
             FileOutputFormat.setOutputPath(cch, new Path("out/miner/cch/"));
 
-            //OUT
+            // OUT
             for (int i = 0; i < 60; i++) {
                 System.out.print((char) 8226 + " ");
             }
             System.out.println();
             System.out.println(dater.format(new Date()) + " INFO miner.sprints.CrosscheckSprint: lambda crosscheck sprint started");
-            //OUT
+            // OUT
 
-            //Storing the starting time of the process
+            // Storing the starting time of the process
             long start = System.currentTimeMillis();
 
-            //Run the job and wait for completion
+            // Run the job and wait for completion
             exitCode = cch.waitForCompletion(true) ? 0 : 1;
 
-            //Storing the finish time of the process
+            // Storing the finish time of the process
             long end = System.currentTimeMillis();
 
-            //Checking for an abnormal exit code
+            // Checking for an abnormal exit code
             if (exitCode != 0) {
-                //Throwing an exception
+                // Throwing an exception
                 throw new AbnormalExitException("An abnormal exit exception occurred at crooscheck sprint");
             }
 
-            //OUT
+            // OUT
             System.out.println(dater.format(new Date()) + " INFO miner.sprints.CrosscheckSprint: lambda crosscheck sprint finished");
             System.out.printf("%-10s %s\n", "Input", args[0]);
             System.out.printf("%-10s %s\n", "Tasks", args[1]);
             System.out.printf("%-10s %s\n", "Ellapsed", decimaler.format(((double) (end - start) / 1000 / 60)) + " Min (" + (end - start) + " msec)");
             System.out.printf("%-10s %s\n", "Output", "out/miner/cch/");
-            //OUT
+            // OUT
         } catch (AbnormalExitException ex) {
-            //Cleaning the hdfs
+            // Cleaning the hdfs
             FileSystem.get(conf).delete(new Path("out/miner/cch/"), true);
 
-            //OUT
+            // OUT
             System.out.println(dater.format(new Date()) + " INFO miner.sprints.CrosscheckSprint: " + ex.getMessage());
-            //OUT
+            // OUT
 
-            //Returning from abnormal exit
+            // Returning from abnormal exit
             return exitCode;
         }
 

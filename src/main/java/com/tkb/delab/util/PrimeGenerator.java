@@ -16,9 +16,7 @@ public class PrimeGenerator implements Generator {
      */
     @Override
     public int generate(int limit) {
-        //Iterating throug the candicates prime numbers
         for (int num = limit; true; num++) {
-            //Checking if this number is prime
             if (isPrime(num)) {
                 return num;
             }
@@ -32,20 +30,14 @@ public class PrimeGenerator implements Generator {
      * @return a boolean value determines if number is prime.
      */
     private boolean isPrime(int num) {
-        //Setting firstly as prime number
         boolean prime = true;
 
-        //Limiting the checks needed
         int limit = (int) Math.sqrt(num);
 
-        //Iterating through the divisors
         for (int i = 2; i <= limit; i++) {
-            //Checking if number divised by the next divisor
             if (num % i == 0) {
-                //Setting the number as not prime
+                // Marking the number as not prime and break
                 prime = false;
-
-                //Breaking the process
                 break;
             }
         }

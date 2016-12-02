@@ -27,27 +27,27 @@ public class LambdaBoundingReducer extends Reducer<Pair, Triple, Triple, Quad> {
      */
     @Override
     public void reduce(Pair key, Iterable<Triple> values, Context context) throws IOException, InterruptedException {
-        //Getting the list iterator
+        // Getting the list iterator
         Iterator<Triple> it = values.iterator();
 
-        //Creating an empty set of triangles
+        // Creating an empty set of triangles
         THashSet<Triangle> triangles = new THashSet<Triangle>();
 
-        //Iterating through the list of triples
+        // Iterating through the list of triples
         while (it.hasNext()) {
-            //Getting the next triple
+            // Getting the next triple
             Triple triple = it.next();
 
-            //Adding next triangle into the set
+            // Adding next triangle into the set
             triangles.add(new Triangle(triple.v, triple.u, triple.w));
         }
 
-        //Setting the edge lambda upper bound to the number of triangles
+        // Setting the edge lambda upper bound to the number of triangles
         int lambda = triangles.size();
 
-        //Iterating through the set of triangles
+        // Iterating through the set of triangles
         for (Triangle t : triangles) {
-            //Emitting the next triangle followed by the edge augmented by its lambda bounds
+            // Emitting the next triangle followed by the edge augmented by its lambda bounds
             context.write(new Triple(t.v, t.u, t.w), new Quad(key.v, key.u, 1, lambda));
         }
     }

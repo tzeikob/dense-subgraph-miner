@@ -16,8 +16,8 @@ import gnu.trove.set.hash.THashSet;
 public interface EdgeDensityEstimator {
 
     /**
-     * An abstract method scoring for each edge the neighborhood density, given
-     * the triangles within.
+     * A method scoring for each edge the neighborhood density, given the
+     * triangles within.
      *
      * @param triangles a set of the triangles within the graph.
      * @return a hash map between edge and its lambda density score.
