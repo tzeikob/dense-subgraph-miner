@@ -12,7 +12,8 @@ import java.util.Iterator;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * A local triangulation reducer.
+ * A reducer collecting a set of edges hashed into the same partition listing
+ * all the triangles applying a local triangulation algorithm.
  *
  * @author Akis Papadopoulos
  */
@@ -28,30 +29,24 @@ public class LocalTriangulationReducer extends Reducer<Triple, Pair, Triple, Pai
      */
     @Override
     public void reduce(Triple key, Iterable<Pair> values, Context context) throws IOException, InterruptedException {
-        // Getting the list iterator
         Iterator<Pair> it = values.iterator();
 
-        // Creating an empty edge set
+        // Discarding duplicate edges
         THashSet<Edge> edges = new THashSet<Edge>();
 
-        // Iterating through the pairs list
         while (it.hasNext()) {
-            // Getting the next pair
             Pair pair = it.next();
 
-            // Adding the edge into the edge set
             edges.add(new Edge(pair.v, pair.u));
         }
 
-        // Creating a forward tringulator
+        // Applying local tringulation
         Triangulator forward = new Forward();
 
         // Listing all sorted triangles within
         THashSet<Triangle> triangles = forward.list(edges);
 
-        // Iterating through each triangle
         for (Triangle t : triangles) {
-            // Emitting next triangle
             context.write(new Triple(t.v, t.u, t.w), null);
         }
     }

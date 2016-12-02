@@ -25,6 +25,7 @@ public class Dispatcher {
         entries = new HashMap<String, Class<?>>();
 
         entries.put(EdgeUndirection.name, EdgeUndirection.class);
+        entries.put(Triangulation.name, Triangulation.class);
     }
 
     public static void main(String[] args) throws Exception {
