@@ -7,7 +7,6 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.log4j.Logger;
 
 /**
  * A mapper sorting edges by the lowest vertex and hashing them into rho
@@ -16,8 +15,6 @@ import org.apache.log4j.Logger;
  * @author Akis Papadopoulos
  */
 public class EdgeUndirectionMapper extends Mapper<LongWritable, Text, IntWritable, Pair> {
-
-    private static final Logger logger = Logger.getLogger(EdgeUndirectionMapper.class);
 
     // Input delimiter character
     private String delimiter;
