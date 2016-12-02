@@ -22,8 +22,8 @@ import org.apache.log4j.Logger;
 
 /**
  * A map reduce sprint job entry, converting an directed to an undirected graph
- * removing duplicate edges, sorting them by the lowest vertex and hashing them
- * into disjoint edge partitions.
+ * removing duplicate edges, sorting them by the lowest vertex, discarding
+ * possible loops as well as invalid malformed input.
  *
  * @author Akis Papadopoulos
  */
@@ -54,14 +54,13 @@ public class EdgeUndirection extends Configured implements Tool {
         // Setting configuration parameters
         Configuration conf = this.getConf();
 
-        conf.set("mapred.textoutputformat.separator", ",");
-        conf.set("dataset.text.delimiter", args[1]);
-        conf.set("dataset.edgeset.rho", args[2]);
+        conf.set("input.text.delimiter", args[1]);
+        conf.set("disjoint.partitions.number", args[2]);
 
         int exitCode = 0;
 
         try {
-            // Creating the underectioning job
+            // Setting up the undirection sprint job
             Job undirect = new Job(conf, name);
             undirect.setJarByClass(EdgeUndirection.class);
 
@@ -82,6 +81,7 @@ public class EdgeUndirection extends Configured implements Tool {
             undirect.setOutputFormatClass(TextOutputFormat.class);
             FileOutputFormat.setOutputPath(undirect, new Path(args[4]));
 
+            // Running the sprint job
             String jobName = this.getClass().getSimpleName();
 
             logger.info("Sprint job " + jobName + " with entry name '" + name + "' started");

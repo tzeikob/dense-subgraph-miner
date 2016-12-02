@@ -10,7 +10,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 
 /**
- * A graph direction transformer mapper.
+ * A mapper sorting edges by the lowest vertex and hashing them into rho
+ * disjoint partitions, discarding loops and invalid malformed input.
  *
  * @author Akis Papadopoulos
  */
@@ -27,7 +28,7 @@ public class EdgeUndirectionMapper extends Mapper<LongWritable, Text, IntWritabl
     /**
      * A map method getting an edge as a pair of vertices, sorting and hashing
      * it by the lowest vertex into a disjoint edge partition, discarding loops
-     * and any invalid formated edge.
+     * and any invalid malformed input.
      *
      * @param key the offset of the line within the input file.
      * @param value a line in <code><v, u></code> form.
@@ -53,28 +54,18 @@ public class EdgeUndirectionMapper extends Mapper<LongWritable, Text, IntWritabl
                     int hu = u % rho;
 
                     context.write(new IntWritable(hu), new Pair(u, v));
-                } else {
-                    logger.warn("Ignoring loop edge for input '" + value.toString() + "'");
                 }
 
             } catch (NumberFormatException exc) {
-                logger.warn("Invalid number format exception for input '" + value.toString() + "'");
             }
-        } else {
-            logger.warn("Invalid format exception for input '" + value.toString() + "'");
         }
     }
 
-    /**
-     * A method to setting up the environment for the mapper.
-     *
-     * @param context a helpful object reading job information from.
-     */
     @Override
     public void setup(Context context) throws IOException, InterruptedException {
         Configuration conf = context.getConfiguration();
 
-        delimiter = conf.get("dataset.text.delimiter", ",");
-        rho = conf.getInt("dataset.edgeset.rho", 1);
+        delimiter = conf.get("input.text.delimiter", "\t");
+        rho = conf.getInt("disjoint.partitions.number", 1);
     }
 }

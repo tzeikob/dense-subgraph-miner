@@ -9,7 +9,8 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * A graph direction transformer reducer.
+ * A reducer collecting edges hashed into the same disjoint partition discarding
+ * duplicates.
  *
  * @author Akis Papadopoulos
  */
@@ -27,9 +28,9 @@ public class EdgeUndirectionReducer extends Reducer<IntWritable, Pair, Pair, Pai
     public void reduce(IntWritable key, Iterable<Pair> values, Context context) throws IOException, InterruptedException {
         Iterator<Pair> it = values.iterator();
 
+        // Collecting unique edges
         THashSet<Edge> edges = new THashSet<Edge>();
 
-        // Collecting unique edges
         while (it.hasNext()) {
             Pair pair = it.next();
 
