@@ -1,7 +1,7 @@
 # Introduction #
-Dense subgraph miner is an open source graph mining library written in Java and is released under the Apache License 2.0. The library uses the MapReduce methodology and it's open source [Hadoop](http://hadoop.apache.org/) implementation, in order to discover dense subgraphs (DSD) within a given big data graph as well as various utilities like triangulation. Source code and other utilities are included in this repository. This document contains only a short brief summary of the project structure as also some tutorials in how to build and use this software. For more up to date information about the project, changelog and issues, please check the links below.
+Dense subgraph miner is an open source graph mining library written in Java and is released under the Apache License 2.0. The library uses the MapReduce methodology and its open source [Hadoop](http://hadoop.apache.org/) implementation, in order to discover dense subgraphs (DSD) within a given big data graph as well as various utilities like triangulation. Source code and other utilities are included in this repository. This document contains only a short brief summary of the project structure as also some tutorials in how to build and use this software. For more up to date information about the project, changelog and issues, please check the links below.
 
-* [Dense Subgraph Discovery in MapReduce](http://ikee.lib.auth.gr/record/131717/?ln=en)
+* [Dense Subgraph Discovery in MapReduce](http://ikee.lib.auth.gr/record/131717/files/GRI-2013-10394.pdf?version=1)
 * [Repository](https://github.com/tzeikob/dense-subgraph-miner)
 * [Bug Reports](https://github.com/tzeikob/dense-subgraph-miner/issues)
 * [Contributors](https://github.com/tzeikob/dense-subgraph-miner/graphs/contributors)
@@ -51,5 +51,5 @@ for now on you can add it as dependency into other projects, just by adding into
 </dependency>
 ```
 
-in the case you want to add pandora library as binary file in the classpath of your project instead as a maven dependency, you will find in the `target/` folder the `dense-subgraph-miner-<version>-lib.jar` binary file, just copy and paste it in the classpath of your project, but beaware in that case you have to add also all the binaries the library depends on, so it's recommended always to use maven dependencies.
+in the case you want to add it as binary file in the classpath of your project instead as a maven dependency, you will find in the `target/` folder the `dense-subgraph-miner-<version>-lib.jar` binary file, just copy and paste it in the classpath of your project, but beaware in that case you have to add also all the binaries the library depends on, so it's recommended always to use maven dependencies.
 
