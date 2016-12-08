@@ -51,5 +51,5 @@ for now on you can add it as dependency into other projects, just by adding into
 </dependency>
 ```
 
-in the case you want to add it as binary file in the classpath of your project instead as a maven dependency, you will find in the `target/` folder the `dense-subgraph-miner-<version>-lib.jar` binary file, just copy and paste it in the classpath of your project, but beaware in that case you have to add also all the binaries the library depends on, so it's recommended always to use maven dependencies.
+in the case you want to add it as binary file in the classpath of your project instead as a maven dependency, you will find in the `target/` folder the `dense-subgraph-miner-<version>.jar` binary file, just copy and paste it in the classpath of your project, but beaware in that case you have to add also all the binaries the library depends on, so it's recommended always to use maven dependencies.
 
