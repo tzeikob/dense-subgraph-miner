@@ -32,7 +32,7 @@ mvn clean package
 
 In the `target/` forlder you will find the `dense-subgraph-miner-<version>.jar` file as well as the `lib/` classpath folder containing all the external libraries the project depends on.
 
-## Running a Hadoop Job ##
+# Running a Hadoop Job #
 Having the executable file `dense-subgraph-miner-<version>.jar` and the `lib/` classpath folder you can now run map-reduce jobs. Before you post the first job you have to copy the libraries from the classpath folder `lib/` to the classpath folder of the Hadoop home directory `HADOOP_HOME/lib/` for each JVM of the complete cluster. Then you can post a map-reduce job by executing in the command line the following line,
 
 ```
@@ -41,7 +41,7 @@ hadoop jar dense-subgraph-miner-<version>.jar <job-entry> [genericOptions] <args
 
 where the `<job-entry>` is the name of the map-reduce job entry, the `[genericOptions]` are optional arguments like `-D mapred.child.java.opts=-Xmx1024m` and the `<args>` are the required arguments regarding the selected map-reduce job entry. Please read further to find detailed examples of supported map-reduce jobs.
 
-### Converting a Directed Graph into an Undirected ###
+## Converting a Directed Graph into an Undirected ##
 Assuming you have put in the DFS a directed graph given as a list of edges with integer vertices per line like so,
 
 ```
