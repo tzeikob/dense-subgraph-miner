@@ -45,7 +45,14 @@ public class EdgeUndirection extends Configured implements Tool {
             logger.error("Unable to run sprint job entry " + name + " with args " + Arrays.asList(args));
             logger.error("Please check the documentation, https://github.com/tzeikob/dense-subgraph-miner");
             logger.error("Usage: hadoop jar <jar-file> " + name + " [genericOptions] <input> <delimiter> <rho> <tasks> <output>\n");
-
+            
+            System.out.println("Arguments required are");
+            System.out.println(" <input> \tpath in DFS to data of an undirected graph given as a list of edges per line");
+            System.out.println(" <delimiter> \tcharacter used in order to seperate the integer vertices of each edge");
+            System.out.println(" <rho> \t\tnumber of disjoint edge partitions");
+            System.out.println(" <tasks> \tnumber of the reducer tasks used");
+            System.out.println(" <output> \tpath in DFS to save the edge list of the new undirected graph\n");
+            
             ToolRunner.printGenericCommandUsage(System.err);
 
             return -1;
