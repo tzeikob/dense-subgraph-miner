@@ -31,8 +31,6 @@ public class Triangulation extends Configured implements Tool {
 
     private static final Logger logger = Logger.getLogger(Triangulation.class);
 
-    public static final String name = "triangulation";
-
     public static void main(String[] args) throws Exception {
         int code = ToolRunner.run(new Triangulation(), args);
 
@@ -41,6 +39,8 @@ public class Triangulation extends Configured implements Tool {
 
     @Override
     public int run(String[] args) throws Exception {
+        String name = this.getClass().getSimpleName();
+        
         if (args.length != 5) {
             logger.error("Unable to run sprint job entry " + name + " with args " + Arrays.asList(args));
             logger.error("Please check the documentation, https://github.com/tzeikob/dense-subgraph-miner");

@@ -24,8 +24,8 @@ public class Dispatcher {
         // Setting up sprint job entries map
         entries = new HashMap<String, Class<?>>();
 
-        entries.put(EdgeUndirection.name, EdgeUndirection.class);
-        entries.put(Triangulation.name, Triangulation.class);
+        entries.put(EdgeUndirection.class.getSimpleName(), EdgeUndirection.class);
+        entries.put(Triangulation.class.getSimpleName(), Triangulation.class);
     }
 
     public static void main(String[] args) throws Exception {
