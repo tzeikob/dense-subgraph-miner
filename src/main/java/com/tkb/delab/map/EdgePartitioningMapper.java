@@ -41,28 +41,30 @@ public class EdgePartitioningMapper extends Mapper<LongWritable, Text, Triple, P
         // Extracting the vertices of the edge
         String[] tokens = line.split(delimiter);
 
-        try {
-            int v = Integer.parseInt(tokens[0]);
-            int u = Integer.parseInt(tokens[1]);
+        if (tokens.length == 2) {
+            try {
+                int v = Integer.parseInt(tokens[0]);
+                int u = Integer.parseInt(tokens[1]);
 
-            if (v != u) {
-                // Hashing the vertices
-                int hv = v % rho;
-                int hu = u % rho;
+                if (v != u) {
+                    // Hashing the vertices
+                    int hv = v % rho;
+                    int hu = u % rho;
 
-                // Hashing the edge into multiple vertex partitions
-                for (int i = 0; i < rho; i++) {
-                    for (int j = i + 1; j < rho; j++) {
-                        for (int k = j + 1; k < rho; k++) {
-                            if (((hv == i) || (hv == j) || (hv == k))
-                                    && ((hu == i) || (hu == j) || (hu == k))) {
-                                context.write(new Triple(i, j, k), new Pair(v, u));
+                    // Hashing the edge into multiple vertex partitions
+                    for (int i = 0; i < rho; i++) {
+                        for (int j = i + 1; j < rho; j++) {
+                            for (int k = j + 1; k < rho; k++) {
+                                if (((hv == i) || (hv == j) || (hv == k))
+                                        && ((hu == i) || (hu == j) || (hu == k))) {
+                                    context.write(new Triple(i, j, k), new Pair(v, u));
+                                }
                             }
                         }
                     }
                 }
+            } catch (NumberFormatException exc) {
             }
-        } catch (NumberFormatException exc) {
         }
     }
 
