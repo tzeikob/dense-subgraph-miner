@@ -30,6 +30,8 @@ public class EdgeUndirectionMapper extends Mapper<LongWritable, Text, IntWritabl
      * @param key the offset of the line within the input file.
      * @param value a line in <code><v, u></code> form.
      * @param context object to collect the output.
+     * @throws java.io.IOException
+     * @throws java.lang.InterruptedException
      */
     @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {

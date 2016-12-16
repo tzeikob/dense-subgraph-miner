@@ -23,6 +23,8 @@ public class EdgeUndirectionReducer extends Reducer<IntWritable, Pair, Pair, Pai
      * @param key the index of the edge partition.
      * @param values the list of sorted edges hashed into partition.
      * @param context object to collect the output.
+     * @throws java.io.IOException
+     * @throws java.lang.InterruptedException
      */
     @Override
     public void reduce(IntWritable key, Iterable<Pair> values, Context context) throws IOException, InterruptedException {
