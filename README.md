@@ -1,5 +1,5 @@
 # Introduction #
-Dense subgraph miner is an open source graph mining library written in Java and is released under the Apache License 2.0. The library uses the MapReduce methodology and its open source [Hadoop](http://hadoop.apache.org/) implementation, in order to discover dense subgraphs (DSD) within a given big data graph as well as various utilities like triangulation. Source code and other utilities are included in this repository. This document contains only a short brief summary of the project structure as also some tutorials in how to build and use this software. For more up to date information about the project, changelog and issues, please check the links below.
+Dense subgraph miner is an open source graph mining library written in Java and is released under the Apache License 2.0. The library uses the map-reduce methodology and its open source [Hadoop](http://hadoop.apache.org/) implementation, in order to discover dense subgraphs (DSD) within a given big data graph as well as various utilities like triangulation. This document contains only a short brief summary of the project structure as also some tutorials in how to build and use this software. For more up to date information about the project, changelog and issues, please check the links below.
 
 * [Dense Subgraph Discovery in MapReduce](http://ikee.lib.auth.gr/record/131717/files/GRI-2013-10394.pdf?version=1)
 * [Repository](https://github.com/tzeikob/dense-subgraph-miner)
@@ -30,7 +30,7 @@ cd dense-subgraph-miner/
 mvn clean package
 ```
 
-In the `target/` forlder you will find the `dense-subgraph-miner-<version>.jar` file as well as two folders, the `config/` containing the configuration files and the `lib/` as the classpath containing all the external libraries the project depends on.
+In the `target/` forlder you will find the `dense-subgraph-miner-<version>.jar` file as well as the `lib/` classpath folder containing all the external libraries the project depends on.
 
 ## Build as a Library ##
 Dense subgraph miner currently does not offering any public maven repository, so in order to use it as an external dependency in another project you have to clone and install it in your local maven repository,
