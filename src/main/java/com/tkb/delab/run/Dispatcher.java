@@ -56,6 +56,12 @@ public class Dispatcher {
             logger.error("Unable to run sprint job entry with args " + Arrays.asList(args));
             logger.error("Please check the documentation, https://github.com/tzeikob/dense-subgraph-miner");
             logger.error("Usage: hadoop jar <jar-file> <job-entry> [genericOptions] <args>\n");
+            
+            System.out.println("Sprint job entries supported are");
+            for(String key : entries.keySet()) {
+                System.out.println(" " + key);
+            }
+            System.out.println();
 
             ToolRunner.printGenericCommandUsage(System.err);
 
