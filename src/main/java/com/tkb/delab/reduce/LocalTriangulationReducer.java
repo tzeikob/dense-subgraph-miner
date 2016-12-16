@@ -26,6 +26,8 @@ public class LocalTriangulationReducer extends Reducer<Triple, Pair, Triple, Pai
      * @param key indexes of the edge partition.
      * @param values the subset of unique sorted edges.
      * @param context object to collect the output.
+     * @throws java.io.IOException
+     * @throws java.lang.InterruptedException
      */
     @Override
     public void reduce(Triple key, Iterable<Pair> values, Context context) throws IOException, InterruptedException {
