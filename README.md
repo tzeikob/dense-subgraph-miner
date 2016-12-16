@@ -8,7 +8,7 @@ Dense subgraph miner is an open source graph mining library written in Java and 
 
 This library can be used in any project focusing on data mining and knowledge discovery on graphs and especially on discovery of possible dense parts of a given big data graph using triangulation. It provides a set of various features given a big data graph like,
 
-* converting directed graph to undirected,
+* converting directed graphs to undirected,
 * enumerating triangles,
 * enumerating dense subgraphs
 
@@ -31,25 +31,4 @@ mvn clean package
 ```
 
 In the `target/` forlder you will find the `dense-subgraph-miner-<version>.jar` file as well as the `lib/` classpath folder containing all the external libraries the project depends on.
-
-## Build as a Library ##
-Dense subgraph miner currently does not offering any public maven repository, so in order to use it as an external dependency in another project you have to clone and install it in your local maven repository,
-
-```
-git clone git@github.com:tzeikob/dense-subgraph-miner.git
-cd dense-subgraph-miner/
-mvn clean install
-```
-
-for now on you can add it as dependency into other projects, just by adding into the `pom.xml` file the following snippet,
-
-```
-<dependency>
- <groupId>com.tkb.lib</groupId>
- <artifactId>dense-subgraph-miner</artifactId>
- <version>${version}</version>
-</dependency>
-```
-
-in the case you want to add it as binary file in the classpath of your project instead as a maven dependency, you will find in the `target/` folder the `dense-subgraph-miner-<version>.jar` binary file, just copy and paste it in the classpath of your project, but beaware in that case you have to add also all the binaries the library depends on, so it's recommended always to use maven dependencies.
 
