@@ -90,7 +90,7 @@ public class EdgeUndirection extends Configured implements Tool {
             FileOutputFormat.setOutputPath(undirect, new Path(args[4]));
 
             // Running the sprint job
-            logger.info("Sprint job with entry name '" + name + "' started");
+            logger.info("Sprint job with entry name '" + undirect.getJobName() + "' started");
 
             long start = System.currentTimeMillis();
             exitCode = undirect.waitForCompletion(true) ? 0 : 1;
@@ -98,10 +98,10 @@ public class EdgeUndirection extends Configured implements Tool {
 
             if (exitCode != 0) {
                 throw new AbnormalExitException("Abnormal exit occurred running "
-                        + "sprint job with entry name '" + name + "'");
+                        + "sprint job with entry name '" + undirect.getJobName() + "'");
             }
 
-            logger.info("Sprint job with entry name '" + name + "' completed in "
+            logger.info("Sprint job with entry name '" + undirect.getJobName() + "' completed in "
                     + new DecimalFormat(".###").format(((double) (end - start) / 1000 / 60)) + " min (" + (end - start) + " ms)");
         } catch (AbnormalExitException exc) {
             logger.error(exc.getMessage(), exc);

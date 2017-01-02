@@ -89,7 +89,7 @@ public class Triangulation extends Configured implements Tool {
             FileOutputFormat.setOutputPath(triangulation, new Path(args[4]));
 
             // Running the sprint job
-            logger.info("Sprint job with entry name '" + name + "' started");
+            logger.info("Sprint job with entry name '" + triangulation.getJobName() + "' started");
 
             long start = System.currentTimeMillis();
             exitCode = triangulation.waitForCompletion(true) ? 0 : 1;
@@ -97,7 +97,7 @@ public class Triangulation extends Configured implements Tool {
 
             if (exitCode != 0) {
                 throw new AbnormalExitException("Abnormal exit occurred running "
-                        + " sprint job with entry name '" + name + "'");
+                        + " sprint job with entry name '" + triangulation.getJobName() + "'");
             }
 
             // Getting the number of triangles enumerated
@@ -105,7 +105,7 @@ public class Triangulation extends Configured implements Tool {
                     .findCounter("org.apache.hadoop.mapred.Task$Counter", "REDUCE_OUTPUT_RECORDS")
                     .getValue();
 
-            logger.info("Sprint job with entry name '" + name + "' completed in "
+            logger.info("Sprint job with entry name '" + triangulation.getJobName() + "' completed in "
                     + new DecimalFormat(".###").format(((double) (end - start) / 1000 / 60)) + " min (" + (end - start) + " ms)"
                     + " found " + counter + " total triangles.");
         } catch (AbnormalExitException exc) {
