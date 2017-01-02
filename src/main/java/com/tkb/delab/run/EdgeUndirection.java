@@ -48,7 +48,7 @@ public class EdgeUndirection extends Configured implements Tool {
             
             System.out.println("Arguments required are");
             System.out.println(" <input> \tpath in DFS to data of a directed graph given as a list of edges per line");
-            System.out.println(" <delimiter> \tcharacter used in order to seperate the integer vertices of each edge");
+            System.out.println(" <delimiter> \tcharacter used in order to separate the integer vertices of each edge");
             System.out.println(" <rho> \t\tnumber of disjoint edge partitions");
             System.out.println(" <tasks> \tnumber of the reducer tasks used");
             System.out.println(" <output> \tpath in DFS to save the edge list of the new undirected graph\n");
