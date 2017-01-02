@@ -61,7 +61,7 @@ hadoop jar dense-subgraph-miner.jar EdgeUndirection <input> <delimiter> <rho> <t
 
 where the required arguments are the `<input>` as the path in DFS to data of a directed graph given as a list of edges per line, the `<delimiter>` as the character used in order to separate the integer vertices of each edge, the `<rho>` as the number of disjoint edge partitions, the `<tasks>` as the number of the reducer tasks used and the `<output>` as the path in DFS to save the edge list of the new undirected graph.
 
-## Listing Triangles within an Undirected graph ##
+## Listing Triangles within an Undirected Graph ##
 Assuming you have in the DFS an undirected graph given as a list of edges with integer vertices per line like so,
 
 ```
@@ -77,4 +77,4 @@ you can list all the available triangles within the graph just by posting the fo
 hadoop jar dense-subgraph-miner.jar Triangulation <input> <delimiter> <rho> <tasks> <output>
 ```
 
-where the required arguments are the `<input>` as the path in DFS to data of an undirected graph given as a list of edges per line, the `<delimiter>` as the character used in order to separate the integer vertices of each edge, the `<rho>` as the number of disjoint vertex partitions which must be equal or greater than 3, the `<tasks>` as the number of the reducer tasks used and the `<output>` as the path in DFS to save the list of triangles. Be aware this process may produce duplicates, detected within different disjoint vertex partitions.
+where the required arguments are the `<input>` as the path in DFS to data of an undirected graph given as a list of edges per line, the `<delimiter>` as the character used in order to separate the integer vertices of each edge, the `<rho>` as the number of disjoint vertex partitions which must be equal or greater than 3, the `<tasks>` as the number of the reducer tasks used and the `<output>` as the path in DFS to save the list of triangles. Be aware this process may produce duplicates have been detected within different disjoint vertex partitions.
