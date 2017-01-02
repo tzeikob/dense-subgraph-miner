@@ -26,6 +26,7 @@ public class Dispatcher {
 
         entries.put(EdgeUndirection.class.getSimpleName(), EdgeUndirection.class);
         entries.put(Triangulation.class.getSimpleName(), Triangulation.class);
+        entries.put(LambdaEstimation.class.getSimpleName(), LambdaEstimation.class);
     }
 
     public static void main(String[] args) throws Exception {
