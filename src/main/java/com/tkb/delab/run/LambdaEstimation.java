@@ -50,16 +50,17 @@ public class LambdaEstimation extends Configured implements Tool {
     public int run(String[] args) throws Exception {
         String name = this.getClass().getSimpleName();
 
-        if (args.length != 6) {
+        if (args.length != 7) {
             logger.error("Unable to run sprint job entry " + name + " with args " + Arrays.asList(args));
             logger.error("Please check the documentation, https://github.com/tzeikob/dense-subgraph-miner");
-            logger.error("Usage: hadoop jar <jar-file> " + name + " [genericOptions] <input> <delimiter> <iter> <mode> <tasks> <output>\n");
+            logger.error("Usage: hadoop jar <jar-file> " + name + " [genericOptions] <input> <delimiter> <iter> <mode> <sort> <tasks> <output>\n");
 
             System.out.println("Arguments required are");
             System.out.println(" <input> \tpath in DFS to data given as a list of triangles per line");
             System.out.println(" <delimiter> \tcharacter used in order to separate the integer vertices of each triangle");
             System.out.println(" <iter> \tnumber of maximum iterations");
             System.out.println(" <mode> \tlambda search mode");
+            System.out.println(" <sort> \ttrue to sort vertices in ascending order otherwise false");
             System.out.println(" <tasks> \tnumber of the reducer tasks used");
             System.out.println(" <output> \tpath in DFS to save the list of edges along with the lambda values\n");
             ToolRunner.printGenericCommandUsage(System.err);
@@ -73,6 +74,7 @@ public class LambdaEstimation extends Configured implements Tool {
         conf.set("mapred.textoutputformat.separator", ",");
         conf.set("input.text.delimiter", args[1]);
         conf.set("lambda.search.mode", args[3]);
+        conf.set("vertices.sorting.mode", args[4]);
 
         int exitCode = 0;
 
@@ -89,14 +91,14 @@ public class LambdaEstimation extends Configured implements Tool {
             init.setReducerClass(LambdaBoundingReducer.class);
             init.setOutputKeyClass(Triple.class);
             init.setOutputValueClass(Quad.class);
-            init.setNumReduceTasks(Integer.parseInt(args[4]));
+            init.setNumReduceTasks(Integer.parseInt(args[5]));
 
             // Setting the input and output
             init.setInputFormatClass(TextInputFormat.class);
             FileInputFormat.addInputPath(init, new Path(args[0]));
 
             init.setOutputFormatClass(TextOutputFormat.class);
-            FileOutputFormat.setOutputPath(init, new Path(args[5] + "/lambda"));
+            FileOutputFormat.setOutputPath(init, new Path(args[6] + "/lambda"));
 
             // Running the sprint job
             logger.info("Sprint job with entry name '" + init.getJobName() + "' started");
@@ -130,16 +132,16 @@ public class LambdaEstimation extends Configured implements Tool {
                 support.setReducerClass(SupportComputationReducer.class);
                 support.setOutputKeyClass(Pair.class);
                 support.setOutputValueClass(Sequence.class);
-                support.setNumReduceTasks(Integer.parseInt(args[4]));
+                support.setNumReduceTasks(Integer.parseInt(args[5]));
 
                 // Setting the input
                 support.setInputFormatClass(TextInputFormat.class);
-                FileInputFormat.addInputPath(support, new Path(args[5] + "/lambda"));
+                FileInputFormat.addInputPath(support, new Path(args[6] + "/lambda"));
 
                 // Setting the output, deleting the previous iteration output
-                FileSystem.get(conf).delete(new Path(args[5] + "/tmp/"), true);
+                FileSystem.get(conf).delete(new Path(args[6] + "/tmp/"), true);
                 support.setOutputFormatClass(TextOutputFormat.class);
-                FileOutputFormat.setOutputPath(support, new Path(args[5] + "/tmp/"));
+                FileOutputFormat.setOutputPath(support, new Path(args[6] + "/tmp/"));
 
                 // Running the sprint job
                 logger.info("Sprint job with entry name '" + support.getJobName() + "' started");
@@ -165,16 +167,16 @@ public class LambdaEstimation extends Configured implements Tool {
                 search.setReducerClass(SearchReducer.class);
                 search.setOutputKeyClass(Triple.class);
                 search.setOutputValueClass(Quad.class);
-                search.setNumReduceTasks(Integer.parseInt(args[4]));
+                search.setNumReduceTasks(Integer.parseInt(args[5]));
 
                 // Setting the input
                 search.setInputFormatClass(TextInputFormat.class);
-                FileInputFormat.addInputPath(search, new Path(args[5] + "/tmp/"));
+                FileInputFormat.addInputPath(search, new Path(args[6] + "/tmp/"));
 
                 // Setting the output, deleting previous iteration output
-                FileSystem.get(conf).delete(new Path(args[5] + "/lambda/"), true);
+                FileSystem.get(conf).delete(new Path(args[6] + "/lambda/"), true);
                 search.setOutputFormatClass(TextOutputFormat.class);
-                FileOutputFormat.setOutputPath(search, new Path(args[5] + "/lambda/"));
+                FileOutputFormat.setOutputPath(search, new Path(args[6] + "/lambda/"));
 
                 // Running the sprint job
                 logger.info("Sprint job with entry name '" + search.getJobName() + "' started");
@@ -204,12 +206,12 @@ public class LambdaEstimation extends Configured implements Tool {
             logger.error(exc.getMessage(), exc);
 
             // Cleaning up the hdfs
-            FileSystem.get(conf).delete(new Path(args[5]), true);
+            FileSystem.get(conf).delete(new Path(args[6]), true);
 
             return exitCode;
         } finally {
             // Deleting the final not needed support output from the hdfs
-            FileSystem.get(conf).delete(new Path(args[5] + "/tmp/"), true);
+            FileSystem.get(conf).delete(new Path(args[6] + "/tmp/"), true);
         }
 
         return exitCode;
