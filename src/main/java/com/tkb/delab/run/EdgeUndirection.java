@@ -21,7 +21,7 @@ import org.apache.hadoop.util.ToolRunner;
 import org.apache.log4j.Logger;
 
 /**
- * A map reduce sprint job entry, converting an directed to an undirected graph
+ * A map reduce sprint job entry, converting a directed to an undirected graph
  * removing duplicate edges, sorting them by the lowest vertex, discarding
  * possible loops as well as invalid malformed input.
  *

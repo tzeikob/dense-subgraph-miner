@@ -12,6 +12,12 @@ import org.apache.hadoop.mapreduce.Mapper;
  * A mapper sorting edges by the lowest vertex and hashing them into rho
  * disjoint partitions, discarding loops and invalid malformed input.
  *
+ * Input: <code><v,u></code>
+ *
+ * Output:  <code>
+ * hash(v), <v,u>
+ * </code>
+ *
  * @author Akis Papadopoulos
  */
 public class EdgeUndirectionMapper extends Mapper<LongWritable, Text, IntWritable, Pair> {
@@ -30,8 +36,6 @@ public class EdgeUndirectionMapper extends Mapper<LongWritable, Text, IntWritabl
      * @param key the offset of the line within the input file.
      * @param value a line in <code><v, u></code> form.
      * @param context object to collect the output.
-     * @throws java.io.IOException
-     * @throws java.lang.InterruptedException
      */
     @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {

@@ -10,7 +10,18 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 /**
  * A reducer collecting edges hashed into the same disjoint partition discarding
- * duplicates.
+ * duplicates. Be aware we are assuming the edges coming with their vertices
+ * sorted in ascending order.
+ *
+ * Input: <code><hash(v), list of <v,u></code>
+ *
+ * Output:
+ * <code>
+ * <v,u>
+ * <v,u>
+ * ...
+ * <v,u>
+ * </code>
  *
  * @author Akis Papadopoulos
  */
@@ -23,8 +34,6 @@ public class EdgeUndirectionReducer extends Reducer<IntWritable, Pair, Pair, Pai
      * @param key the index of the edge partition.
      * @param values the list of sorted edges hashed into partition.
      * @param context object to collect the output.
-     * @throws java.io.IOException
-     * @throws java.lang.InterruptedException
      */
     @Override
     public void reduce(IntWritable key, Iterable<Pair> values, Context context) throws IOException, InterruptedException {
