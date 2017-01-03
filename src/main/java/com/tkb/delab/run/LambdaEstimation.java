@@ -80,7 +80,7 @@ public class LambdaEstimation extends Configured implements Tool {
 
         try {
             // Setting up the lambda initialization job
-            Job init = new Job(conf, name + ".initialization");
+            Job init = new Job(conf, name + ".initiate");
             init.setJarByClass(LambdaEstimation.class);
 
             // Setting the mapper and the reducer

@@ -55,19 +55,22 @@ public class LambdaBoundingMapper extends Mapper<LongWritable, Text, Pair, Tripl
                 int u = Integer.parseInt(tokens[1]);
                 int w = Integer.parseInt(tokens[2]);
 
-                Triangle t = new Triangle(v, u, w);
+                // Discarding invalid trinagles with loops
+                if (v != u && v != w && u != w) {
+                    Triangle t = new Triangle(v, u, w);
 
-                // Sorting the vertices in ascending order
-                if (sort) {
-                    t.sort();
+                    // Sorting the vertices in ascending order
+                    if (sort) {
+                        t.sort();
+                    }
+
+                    // Emitting the triangle's edges folowed by the triangle
+                    context.write(new Pair(t.v, t.u), new Triple(t.v, t.u, t.w));
+
+                    context.write(new Pair(t.u, t.w), new Triple(t.v, t.u, t.w));
+
+                    context.write(new Pair(t.v, t.w), new Triple(t.v, t.u, t.w));
                 }
-
-                // Emitting the triangle's edges folowed by the triangle
-                context.write(new Pair(t.v, t.u), new Triple(t.v, t.u, t.w));
-
-                context.write(new Pair(t.u, t.w), new Triple(t.v, t.u, t.w));
-
-                context.write(new Pair(t.v, t.w), new Triple(t.v, t.u, t.w));
             } catch (NumberFormatException exc) {
             }
         }
