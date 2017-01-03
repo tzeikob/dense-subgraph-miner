@@ -12,8 +12,20 @@ import java.util.Iterator;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * A reducer collecting a set of edges hashed into the same partition listing
- * all the triangles applying a local triangulation algorithm.
+ * A reducer collecting a set of edges hashed into the same partition, listing
+ * all the triangles applying a local triangulation algorithm. Be aware the
+ * edges must be in the form in which the integer vertices should be order in
+ * ascending order.
+ *
+ * Input: <code><i,j,k>, list of <v,u></code>
+ *
+ * Output:
+ * <code>
+ * <v,u,w>
+ * <v,u,w>
+ * ...
+ * <v,u,w>
+ * </code>
  *
  * @author Akis Papadopoulos
  */
@@ -21,13 +33,11 @@ public class LocalTriangulationReducer extends Reducer<Triple, Pair, Triple, Pai
 
     /**
      * A reduce method collecting for an indexed partition a subset of sorted
-     * edges, listing all the triangles within, emitting each triangle found.
+     * edges, listing all the triangles within and emitting each triangle found.
      *
      * @param key indexes of the edge partition.
      * @param values the subset of unique sorted edges.
      * @param context object to collect the output.
-     * @throws java.io.IOException
-     * @throws java.lang.InterruptedException
      */
     @Override
     public void reduce(Triple key, Iterable<Pair> values, Context context) throws IOException, InterruptedException {
@@ -45,9 +55,9 @@ public class LocalTriangulationReducer extends Reducer<Triple, Pair, Triple, Pai
         // Applying local tringulation
         Triangulator forward = new Forward();
 
-        // Listing all sorted triangles within
         THashSet<Triangle> triangles = forward.list(edges);
 
+        // Emitting all the triangles found
         for (Triangle t : triangles) {
             context.write(new Triple(t.v, t.u, t.w), null);
         }
