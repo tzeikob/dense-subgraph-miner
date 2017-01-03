@@ -42,27 +42,28 @@ hadoop jar dense-subgraph-miner-<version>.jar <job-entry> [genericOptions] <args
 where the `<job-entry>` is the name of the map-reduce job entry, the `[genericOptions]` are optional arguments like `-D mapred.child.java.opts=-Xmx1024m` and the `<args>` are the required arguments regarding the selected map-reduce job entry. Please read further to find detailed examples of supported map-reduce jobs.
 
 ## Converting a Directed Graph into an Undirected ##
-Assuming you have put in the DFS a directed graph given as a list of edges with integer vertices per line like so,
+Assuming you have put in the DFS a directed graph given as a list of edges with integer vertices per line, like so,
 
 ```
 1,3
 4,5
 3,2
 2,3
+8,8
 ...
 5,4
 ```
 
-you can convert it to an undirected graph just by posting the following command,
+you can convert it to an undirected graph discarding loops and invalid malformed edges, just by posting the following command,
 
 ```
 hadoop jar dense-subgraph-miner.jar EdgeUndirection <input> <delimiter> <rho> <tasks> <output>
 ```
 
-where the required arguments are the `<input>` as the path in DFS to data of a directed graph given as a list of edges per line, the `<delimiter>` as the character used in order to separate the integer vertices of each edge, the `<rho>` as the number of disjoint edge partitions, the `<tasks>` as the number of the reducer tasks used and the `<output>` as the path in DFS to save the edge list of the new undirected graph.
+where the required arguments are the `<input>` as the path in DFS to data of a directed graph given as a list of edges per line, the `<delimiter>` as the character used in order to separate the integer vertices of each edge, the `<rho>` as the number of disjoint edge partitions, the `<tasks>` as the number of the reducer tasks used and the `<output>` as the path in DFS to save the edge list of the new undirected graph. Be aware that this job removes any loop or invalid malformed edge within the given graph.
 
-## Listing Triangles within an Undirected Graph ##
-Assuming you have in the DFS an undirected graph given as a list of edges with integer vertices per line like so,
+## Listing Triangles given an Undirected Graph ##
+Assuming you have in the DFS an undirected graph given as a list of edges per line with integer vertices sorted in ascending order*, like so,
 
 ```
 1,3
@@ -74,7 +75,9 @@ Assuming you have in the DFS an undirected graph given as a list of edges with i
 you can list all the available triangles within the graph just by posting the following command,
 
 ```
-hadoop jar dense-subgraph-miner.jar Triangulation <input> <delimiter> <rho> <tasks> <output>
+hadoop jar dense-subgraph-miner.jar Triangulation <input> <delimiter> <rho> <sort> <tasks> <output>
 ```
 
-where the required arguments are the `<input>` as the path in DFS to data of an undirected graph given as a list of edges per line, the `<delimiter>` as the character used in order to separate the integer vertices of each edge, the `<rho>` as the number of disjoint vertex partitions which must be equal or greater than 3, the `<tasks>` as the number of the reducer tasks used and the `<output>` as the path in DFS to save the list of triangles. Be aware this process may produce duplicates have been detected within different disjoint vertex partitions.
+where the required arguments are the `<input>` as the path in DFS to data of an undirected graph given as a list of edges per line, the `<delimiter>` as the character used in order to separate the integer vertices of each edge, the `<rho>` as the number of disjoint vertex partitions which must be equal or greater than 3, the `<sort>` as a boolean option to sort the vertices within each edge in ascending order otherwise false, the `<tasks>` as the number of the reducer tasks used and the `<output>` as the path in DFS to save the list of triangles. Be aware this job may produce duplicate triangles, which have been detected within different disjoint vertex partitions.
+
+*this job assumes that each edge within the edge list coming in the form with vertices sorted in ascending order. If this is not the case for you, you can use the `<sort>` boolean option to force the sorting edge step otherwise set this to false.
