@@ -29,9 +29,10 @@ import org.apache.log4j.Logger;
 
 /**
  * A map reduce sprint job entry, calculating an optimal lambda value for each
- * edge indicating a density factor of the subgraphs that edge belongs to. The
- * job is a repetitive process re-estimating lambda values until we reach a
- * maximum bound of iterations or there is no edge marked as unconverged.
+ * edge, the number of triangles the edge belongs to, a density factor of the
+ * subgraphs that edge belongs to. The job is a repetitive process re-estimating
+ * lambda values until we reach a maximum bound of iterations or there is no
+ * edge marked as unconverged.
  *
  * @author Akis Papadopoulos
  */
@@ -101,6 +102,7 @@ public class LambdaEstimation extends Configured implements Tool {
             logger.info("Sprint job with entry name '" + init.getJobName() + "' started");
 
             long start = System.currentTimeMillis();
+
             exitCode = init.waitForCompletion(true) ? 0 : 1;
 
             if (exitCode != 0) {
@@ -187,7 +189,8 @@ public class LambdaEstimation extends Configured implements Tool {
                 // Getting the number of unconverged edges
                 unconverged = search.getCounters().findCounter(Counter.UNCONVERGED_EDGES).getValue();
 
-                logger.info("Sprint job with entry name '" + search.getJobName() + "' finished with " + unconverged + " unconverged edges");
+                logger.info("Sprint job with entry name '" + search.getJobName()
+                        + "' finished with " + unconverged + " unconverged edges");
 
                 iterations++;
             }
@@ -195,7 +198,8 @@ public class LambdaEstimation extends Configured implements Tool {
             long end = System.currentTimeMillis();
 
             logger.info("Sprint job with entry name '" + name + "' completed in "
-                    + new DecimalFormat(".###").format(((double) (end - start) / 1000 / 60)) + " min (" + (end - start) + " ms)");
+                    + new DecimalFormat(".###").format(((double) (end - start) / 1000 / 60))
+                    + " min (" + (end - start) + " ms)");
         } catch (AbnormalExitException exc) {
             logger.error(exc.getMessage(), exc);
 

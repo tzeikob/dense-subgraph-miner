@@ -107,7 +107,7 @@ public class Triangulation extends Configured implements Tool {
 
             logger.info("Sprint job with entry name '" + triangulation.getJobName() + "' completed in "
                     + new DecimalFormat(".###").format(((double) (end - start) / 1000 / 60)) + " min (" + (end - start) + " ms)"
-                    + " found " + counter + " total triangles.");
+                    + " found " + counter + " total triangles");
         } catch (AbnormalExitException exc) {
             logger.error(exc.getMessage(), exc);
 
