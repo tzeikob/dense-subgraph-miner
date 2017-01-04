@@ -50,7 +50,7 @@ public class Triangulation extends Configured implements Tool {
             System.out.println(" <input> \tpath in DFS to data of an undirected graph given as a list of edges per line");
             System.out.println(" <delimiter> \tcharacter used in order to separate the integer vertices of each edge");
             System.out.println(" <rho> \t\tnumber of disjoint vertex partitions, equal or greater than 3");
-            System.out.println(" <sort> \ttrue to sort vertices in ascending order otherwise false");
+            System.out.println(" <sort> \ttrue to sort vertices in ascending order before processing otherwise false");
             System.out.println(" <tasks> \tnumber of the reducer tasks used");
             System.out.println(" <output> \tpath in DFS to save the triangle list including possible duplicates\n");
             ToolRunner.printGenericCommandUsage(System.err);
