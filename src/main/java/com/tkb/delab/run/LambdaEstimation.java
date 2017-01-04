@@ -60,7 +60,7 @@ public class LambdaEstimation extends Configured implements Tool {
             System.out.println(" <delimiter> \tcharacter used in order to separate the integer vertices of each triangle");
             System.out.println(" <iter> \tnumber of maximum iterations");
             System.out.println(" <mode> \tlambda search mode");
-            System.out.println(" <sort> \ttrue to sort vertices in ascending order otherwise false");
+            System.out.println(" <sort> \ttrue to sort vertices in ascending order before processing otherwise false");
             System.out.println(" <tasks> \tnumber of the reducer tasks used");
             System.out.println(" <output> \tpath in DFS to save the list of edges along with the lambda values\n");
             ToolRunner.printGenericCommandUsage(System.err);
@@ -113,7 +113,7 @@ public class LambdaEstimation extends Configured implements Tool {
             }
 
             logger.info("Sprint job with entry name '" + init.getJobName() + "' finished");
-
+            
             // Iterating to find the optimal valid lambda upper bounds
             int max = Integer.parseInt(args[2]);
             int iterations = 0;

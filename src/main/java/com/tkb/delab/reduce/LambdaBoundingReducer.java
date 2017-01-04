@@ -11,18 +11,18 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 /**
  * A reducer collecting triangles an edge belongs to marking it with an upper
- * and lower bound of lambda values indicating the total number of triangles
- * that edge participates. Be aware that this function assumes the vertices are
- * ordered in ascending order both for edges and triangles.
+ * (lambda) and lower (kappa) bound of lambda values indicating the total number
+ * of triangles that edge participates. Be aware that this function assumes the
+ * vertices are ordered in ascending order both for edges and triangles.
  *
  * Input: <code><v,u>, list of <v,u,w></code>
  *
  * Output:
  * <code>
- * <v,u,w>, <v,u,1,lambda>
- * <v,u,w>, <v,u,1,lambda>
+ * <v,u,w>, <v,u,kappa,lambda>
+ * <v,u,w>, <v,u,kappa,lambda>
  * ...
- * <v,u,w>, <v,u,1,lambda>
+ * <v,u,w>, <v,u,kappa,lambda>
  * </code>
  *
  * @author Akis Papadopoulos

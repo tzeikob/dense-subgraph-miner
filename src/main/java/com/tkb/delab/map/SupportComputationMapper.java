@@ -8,15 +8,22 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
- * A support computation mapper.
+ * A mapper getting as input a line consisting of a triangle followed by one of
+ * its edges attached with the kappa and lambda values emitting the edge keyed
+ * by the triangle, discarding invalid or malformed input. Be aware the vertices
+ * must be integer values only.
+ *
+ * Input: <code><v,u,w,v,u,kappa,lambda></code>
+ *
+ * Output: <code><v,u,w>, <v,u,kappa,lambda></code>
  *
  * @author Akis Papadopoulos
  */
 public class SupportComputationMapper extends Mapper<LongWritable, Text, Triple, Quad> {
 
     /**
-     * A map method getting as input a sorted triangle followed by one of its
-     * edges augmented by its lambda bounds, emitting as it is.
+     * A map method getting as input a triangle followed by one of its edges
+     * attached with its kappa and lambda bounds, emitting as it is.
      *
      * @param key the offset of the line within the input file.
      * @param value a line in <code><v,u,w,v,u,kappa,lambda></code> form.
@@ -24,34 +31,27 @@ public class SupportComputationMapper extends Mapper<LongWritable, Text, Triple,
      */
     @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        // Getting the value as a raw line
-        String line = value.toString();
+        String[] tokens = value.toString().split(",");
 
-        // Extracting all the tokens within this line
-        String[] tokens = line.split(",");
+        if (tokens.length == 7) {
+            try {
+                // Extracting the triangle
+                int v = Integer.parseInt(tokens[0]);
+                int u = Integer.parseInt(tokens[1]);
+                int w = Integer.parseInt(tokens[2]);
 
-        // Setting the triangle first vertex
-        int v = Integer.parseInt(tokens[0]);
+                // Extracting the edge
+                int ev = Integer.parseInt(tokens[3]);
+                int eu = Integer.parseInt(tokens[4]);
 
-        // Setting the triangle second vertex
-        int u = Integer.parseInt(tokens[1]);
+                // Extracting the kappa and lambda bounds
+                int kappa = Integer.parseInt(tokens[5]);
+                int lambda = Integer.parseInt(tokens[6]);
 
-        // Setting the triangle third vertex
-        int w = Integer.parseInt(tokens[2]);
-
-        // Setting the edge first vertex
-        int ev = Integer.parseInt(tokens[3]);
-
-        // Setting the edge second vertex
-        int eu = Integer.parseInt(tokens[4]);
-
-        // Setting the edge lower lambda bound
-        int kappa = Integer.parseInt(tokens[5]);
-
-        // Setting the edge upper lambda bound
-        int lambda = Integer.parseInt(tokens[6]);
-
-        // Emitting thr triangle followed by the edge augmented by its lambda values
-        context.write(new Triple(v, u, w), new Quad(ev, eu, kappa, lambda));
+                // Emitting the edge attached with its lambda bounds with key the triangle
+                context.write(new Triple(v, u, w), new Quad(ev, eu, kappa, lambda));
+            } catch (NumberFormatException exc) {
+            }
+        }
     }
 }
