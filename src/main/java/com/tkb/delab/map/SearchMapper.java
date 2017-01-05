@@ -9,16 +9,25 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
- * A lambda estimation binary search mapper.
+ * A mapper getting as input a line consisting of an edge followed by the kappa
+ * and lambda values followed by the triangles it participates along with the
+ * support value, emitting the lambda values, the triangle and the support value
+ * keyed by that edge. This function is discarding invalid or malformed input.
+ * Be aware the vertices must be integer values only.
+ *
+ * Input: <code><v,u,kappa,lambda,v,u,w,support></code>
+ *
+ * Output: <code><v,u>, <kappa,lambda,v,u,w,support></code>
  *
  * @author Akis Papadopoulos
  */
 public class SearchMapper extends Mapper<LongWritable, Text, Pair, Sequence> {
 
     /**
-     * A map method getting as input a sorted edge augmented by its lambda lower
-     * and upper bounds followed one by its triangles augmented by the support
-     * value, emitting as it is.
+     * A map method getting as input an edge augmented by its lambda lower and
+     * upper bounds followed by a triangle it participates and the support
+     * value, emitting the lambda values, the triangle and the support value
+     * keyed by that edge.
      *
      * @param key the offset of the line within the input file.
      * @param value a line in <code><v,u,kappa,lambda,v,u,w,support></code>
@@ -27,38 +36,35 @@ public class SearchMapper extends Mapper<LongWritable, Text, Pair, Sequence> {
      */
     @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        // Getting the value as a raw line
-        String line = value.toString();
+        String[] tokens = value.toString().split(",");
 
-        // Extracting all the tokens within this line
-        String[] tokens = line.split(",");
+        if (tokens.length == 8) {
+            try {
+                // Extracting the edge
+                int v = Integer.parseInt(tokens[0]);
+                int u = Integer.parseInt(tokens[1]);
 
-        // Setting the edge first vertex
-        int v = Integer.parseInt(tokens[0]);
+                // Extracting the lambda bounds
+                int kappa = Integer.parseInt(tokens[2]);
+                int lambda = Integer.parseInt(tokens[3]);
 
-        // Setting the edge second vertex
-        int u = Integer.parseInt(tokens[1]);
+                // Extracting the triangle
+                int tv = Integer.parseInt(tokens[4]);
+                int tu = Integer.parseInt(tokens[5]);
+                int tw = Integer.parseInt(tokens[6]);
 
-        // Setting the edge lower lambda bound
-        int kappa = Integer.parseInt(tokens[2]);
+                // Extracting the support value
+                int support = Integer.parseInt(tokens[7]);
 
-        // Setting the edge upper lambda bound
-        int lambda = Integer.parseInt(tokens[3]);
-
-        // Setting the triangle first vertex
-        int tv = Integer.parseInt(tokens[4]);
-
-        // Setting the triangle second vertex
-        int tu = Integer.parseInt(tokens[5]);
-
-        // Setting the triangle first vertex
-        int tw = Integer.parseInt(tokens[6]);
-
-        // Setting the triangle support value
-        int support = Integer.parseInt(tokens[7]);
-
-        // Emitting the egde augmented by the lambda bounds followed by the supported triangle
-        context.write(new Pair(v, u), new Sequence(new IntWritable(kappa), new IntWritable(lambda),
-                new IntWritable(tv), new IntWritable(tu), new IntWritable(tw), new IntWritable(support)));
+                // Emitting the lambdas, the triangle and the support value keyed by the edge
+                context.write(new Pair(v, u), new Sequence(new IntWritable(kappa),
+                        new IntWritable(lambda),
+                        new IntWritable(tv),
+                        new IntWritable(tu),
+                        new IntWritable(tw),
+                        new IntWritable(support)));
+            } catch (NumberFormatException exc) {
+            }
+        }
     }
 }

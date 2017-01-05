@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 
 /**
  * A map reduce sprint job entry, calculating an optimal lambda value for each
- * edge, the number of triangles the edge belongs to, a density factor of the
+ * edge, the number of triangles the edge belongs to, as a density factor of the
  * subgraphs that edge belongs to. The job is a repetitive process re-estimating
  * lambda values until we reach a maximum bound of iterations or there is no
  * edge marked as unconverged.
@@ -59,7 +59,7 @@ public class LambdaEstimation extends Configured implements Tool {
             System.out.println(" <input> \tpath in DFS to data given as a list of triangles per line");
             System.out.println(" <delimiter> \tcharacter used in order to separate the integer vertices of each triangle");
             System.out.println(" <iter> \tnumber of maximum iterations");
-            System.out.println(" <mode> \tlambda search mode");
+            System.out.println(" <mode> \tlambda search mode, sequential (0) or binary (1)");
             System.out.println(" <sort> \ttrue to sort vertices in ascending order before processing otherwise false");
             System.out.println(" <tasks> \tnumber of the reducer tasks used");
             System.out.println(" <output> \tpath in DFS to save the list of edges along with the lambda values\n");
@@ -113,7 +113,7 @@ public class LambdaEstimation extends Configured implements Tool {
             }
 
             logger.info("Sprint job with entry name '" + init.getJobName() + "' finished");
-            
+
             // Iterating to find the optimal valid lambda upper bounds
             int max = Integer.parseInt(args[2]);
             int iterations = 0;
@@ -155,7 +155,7 @@ public class LambdaEstimation extends Configured implements Tool {
 
                 logger.info("Sprint job with entry name '" + support.getJobName() + "' finished");
 
-                // Setting up the binray lambda search job
+                // Setting up the lambda search job
                 Job search = new Job(conf, name + "[" + (iterations + 1) + "].search");
                 search.setJarByClass(LambdaEstimation.class);
 
@@ -188,7 +188,7 @@ public class LambdaEstimation extends Configured implements Tool {
                             + " sprint job with entry name '" + search.getJobName() + "'");
                 }
 
-                // Getting the number of unconverged edges
+                // Getting the global number of unconverged edges
                 unconverged = search.getCounters().findCounter(Counter.UNCONVERGED_EDGES).getValue();
 
                 logger.info("Sprint job with entry name '" + search.getJobName()

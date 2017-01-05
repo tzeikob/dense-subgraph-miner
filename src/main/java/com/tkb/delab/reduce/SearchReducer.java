@@ -14,9 +14,22 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * A lambda estimation binary search reducer.
+ * A reducer collecting for an edge all the triangles it participates along with
+ * the corresponding lower and upper lambda values and the support value,
+ * calculating the new lambda lower and upper bound values regarding the total
+ * support value using a sequential or a binary search mode. This function emits
+ * each triangle followed by the edge and its new lambda values. In addition it
+ * counts each unconverged edge.
  *
- * @author Akis Papadopoulos
+ * Input: <code><v,u>, list of <kappa,lambda,v,u,w,support></code>
+ *
+ * Output:
+ * <code>
+ * <v,u,w>, <v,u,kappa,lambda>
+ * <v,u,w>, <v,u,kappa,lambda>
+ * ...
+ * <v,u,w>, <v,u,kappa,lambda>
+ * </code>
  */
 public class SearchReducer extends Reducer<Pair, Sequence, Triple, Quad> {
 
@@ -24,143 +37,94 @@ public class SearchReducer extends Reducer<Pair, Sequence, Triple, Quad> {
     private int mode;
 
     /**
-     * A reduce method collecting for a sorted edge, its lambda bounds, all its
-     * sorted triangles followed by the support value summing to the total
-     * support and searching for an new optimal valid lambda upper bound,
-     * emitting each of the triangles participates followed by the new lambda
-     * bounds found
+     * A reduce method collecting for an edge, its lambda bounds and its
+     * triangles followed by the support value, calculating the total support
+     * value and searching for the new optimal valid lambda upper bound,
+     * emitting each triangle followed by the edge and the new lambda bounds.
      *
-     * @param key a sorted edge augmented by its lambda bounds.
-     * @param values the list of edge triangles augmented by the support value
-     * and the lambda bounds.
+     * @param key an edge attached with its lambda bounds.
+     * @param values the list of triangles along with the support value and the
+     * lambda bounds.
      * @param context object to collect the output.
      */
     @Override
     public void reduce(Pair key, Iterable<Sequence> values, Context context) throws IOException, InterruptedException {
-        // Getting the sequences iterator
         Iterator<Sequence> it = values.iterator();
 
-        // Creating a lambda lower bound reference
+        // Calculating the total support value along with other data
         int kappa = 0;
-
-        // Creating a lambda upper bound reference
         int lambda = 0;
-
-        // Creating an empty list of triangles
-        THashSet<Triangle> triangles = new THashSet<Triangle>();
-
-        // Storing the total support of the edge
         int total = 0;
 
-        // Checking if any sequence is provided
-        if (it.hasNext()) {
-            // Getting the first sequence
-            Sequence seq = it.next();
+        THashSet<Triangle> triangles = new THashSet<Triangle>();
 
-            // Getting the lower lambda bound
-            kappa = ((IntWritable) seq.get(0)).get();
-
-            // Getting the upper lambda bound
-            lambda = ((IntWritable) seq.get(1)).get();
-
-            // Getting the vertices of the next tringle
-            int v = ((IntWritable) seq.get(2)).get();
-            int u = ((IntWritable) seq.get(3)).get();
-            int w = ((IntWritable) seq.get(4)).get();
-
-            // Adding next triangle into the set
-            triangles.add(new Triangle(v, u, w));
-
-            // Updating the support value
-            total += ((IntWritable) seq.get(5)).get();
-        }
-
-        // Iterating through the rest of sequences
         while (it.hasNext()) {
-            // Getting the next sequence
             Sequence seq = it.next();
 
-            // Getting the new lower lambda bound
+            // Saving the maximum lower and upper lambda bound
             int newKappa = ((IntWritable) seq.get(0)).get();
 
-            // Updating the old lower lambda bound
             if (kappa < newKappa) {
                 kappa = newKappa;
             }
 
-            // Getting the new upper lambda bound
             int newLambda = ((IntWritable) seq.get(1)).get();
 
-            // Updating the old upper lambda bound
             if (lambda < newLambda) {
                 lambda = newLambda;
             }
 
-            // Getting the vertices of the next tringle
+            // Saving the triangle
             int v = ((IntWritable) seq.get(2)).get();
             int u = ((IntWritable) seq.get(3)).get();
             int w = ((IntWritable) seq.get(4)).get();
 
-            // Adding next triangle into the set
             triangles.add(new Triangle(v, u, w));
 
             // Updating the total support value
             total += ((IntWritable) seq.get(5)).get();
         }
 
-        // Counting another lambda bound
-        //context.getCounter(Counter.SUM_OF_LAMBDA).increment(lambda);
-
-        // Checking the lambda search mode
+        // Choosing sequential (0) or binary (1) search mode
         if (mode == 0) {
-            // Checking if the lambda upper bound is not valid and optimal
+            // Decrease upper lambda if not an optimal value
             if (total < lambda) {
-                // Updating lambda upper bound
                 lambda -= 1;
 
-                // Counting another edge not converge
+                // Counting another unconverged edge
                 context.getCounter(Counter.UNCONVERGED_EDGES).increment(1L);
             }
         } else if (mode == 1) {
-            // Checking if the optimal lambda upper bound is not found
+            // Update lower and upper lambda if upper lambda not optimal
             if (kappa < lambda) {
-                // Calculating the median lambda bound
                 int mu = (lambda + kappa + 1) / 2;
 
-                // Checking if the median bound is not valid
+                // Update lower or upper bounds regarding medium and total value
                 if (total < mu) {
-                    // Updating the lambda upper bound
                     lambda = mu - 1;
                 } else {
-                    // Updating the lambda lower bound
                     kappa = mu;
                 }
 
-                // Counting another edge not converge
+                // Counting another unconverged edge
                 context.getCounter(Counter.UNCONVERGED_EDGES).increment(1L);
             }
         }
 
-        // Iterating through the set of triangles
+        // Emitting each triangle followed by the edge and the new lambda bounds
         for (Triangle t : triangles) {
-            // Emitting next triangle followed by the augmented edge with the new lambda bounds
             context.write(new Triple(t.v, t.u, t.w), new Quad(key.v, key.u, kappa, lambda));
         }
     }
 
-    /**
-     * A method to setting up the environment for the reducer.
-     *
-     * @param context a helpful object reading job information from.
-     */
     @Override
     public void setup(Context context) throws IOException, InterruptedException {
         Configuration conf = context.getConfiguration();
-        
+
         mode = conf.getInt("lambda.search.mode", 0);
 
-        //Checking for an invalid search mode
-        if (mode != 0 && mode != 1) {
+        // Fallback to sequential mode
+        if (mode < 0 || mode > 1) {
             mode = 0;
         }
     }
