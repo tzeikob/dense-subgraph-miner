@@ -62,7 +62,7 @@ public class LambdaEstimation extends Configured implements Tool {
             System.out.println(" <mode> \tlambda search mode, sequential (0) or binary (1)");
             System.out.println(" <sort> \ttrue to sort vertices in ascending order before processing otherwise false");
             System.out.println(" <tasks> \tnumber of the reducer tasks used");
-            System.out.println(" <output> \tpath in DFS to save the list of edges along with the lambda values\n");
+            System.out.println(" <output> \tpath in DFS to save the list of triangles along with the edges attached with the optimal lambda values\n");
             ToolRunner.printGenericCommandUsage(System.err);
 
             return -1;
