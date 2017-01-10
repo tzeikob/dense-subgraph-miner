@@ -90,7 +90,7 @@ public class LocalEstimation extends Configured implements Tool {
             FileInputFormat.addInputPath(lambda, new Path(args[0]));
 
             lambda.setOutputFormatClass(TextOutputFormat.class);
-            FileOutputFormat.setOutputPath(lambda, new Path(args[5] + "/tmp"));
+            FileOutputFormat.setOutputPath(lambda, new Path(args[5] + "/lambda"));
 
             // Running the sprint job
             logger.info("Sprint job with entry name '" + lambda.getJobName() + "' started");
@@ -116,9 +116,6 @@ public class LocalEstimation extends Configured implements Tool {
             FileSystem.get(conf).delete(new Path(args[5]), true);
 
             return exitCode;
-        } finally {
-            // Deleting the final not needed support output from the hdfs
-            FileSystem.get(conf).delete(new Path(args[5] + "/tmp/"), true);
         }
 
         return exitCode;
