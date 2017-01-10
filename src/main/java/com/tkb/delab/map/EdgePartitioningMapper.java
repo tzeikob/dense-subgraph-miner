@@ -92,5 +92,10 @@ public class EdgePartitioningMapper extends Mapper<LongWritable, Text, Triple, P
         delimiter = conf.get("input.text.delimiter", "\t");
         rho = conf.getInt("vertex.partitions.number", 3);
         sort = conf.getBoolean("vertices.sorting.mode", true);
+
+        // Fallback to default rho value
+        if (rho < 3) {
+            rho = 3;
+        }
     }
 }
