@@ -17,79 +17,83 @@ import java.util.Iterator;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * A local lambda estimation reducer.
+ * A reducer collecting a set of edges hashed into the same partition,
+ * calculating the optimal local lambda density value regarding the triangles
+ * each edge participating to. Be aware the edges must be in the form in which
+ * the integer vertices should be order in ascending order.
+ *
+ * Input: <code><i,j,k>, list of <v,u></code>
+ *
+ * Output:
+ * <code>
+ * <v,u,w>, <v,u,kappa,lambda>
+ * <v,u,w>, <v,u,kappa,lambda>
+ * ...
+ * <v,u,w>, <v,u,kappa,lambda>
+ * </code>
  *
  * @author Akis Papadopoulos
  */
 public class LocalLambdaEstimationReducer extends Reducer<Triple, Pair, Triple, Quad> {
 
     /**
-     * A reduce method collecting for an indexed partition a subset of sorted
-     * edges, listing all the triangles within estimating the lambda bounds,
-     * emitting each triangle found three times one for each of its incident
-     * edges augmented by its lambda bounds found respectively.
+     * A reduce method collecting for an indexed partition a subset of edges,
+     * listing all the triangles within estimating the lambda lower and upper
+     * bounds for each edge, emitting each triangle found three times one for
+     * each of its incident edges attached with its lambda bounds.
      *
      * @param key indexes of the edge partition.
-     * @param values the subset of unique sorted edges.
+     * @param values the list of edges.
      * @param context object to collect the output.
      */
     @Override
     public void reduce(Triple key, Iterable<Pair> values, Context context) throws IOException, InterruptedException {
-        // Getting the list iterator
         Iterator<Pair> it = values.iterator();
 
-        // Creating an empty edge set
+        // Collecting the edge set discarding duplicates
         THashSet<Edge> edges = new THashSet<Edge>();
 
-        // Iterating through the pairs list
         while (it.hasNext()) {
-            // Getting the next pair
             Pair pair = it.next();
 
-            // Adding the edge into the edge set
             edges.add(new Edge(pair.v, pair.u));
         }
 
-        // Creating a forward tringulator
+        // Calculating the triangles
         Triangulator forward = new Forward();
 
-        // Listing all sorted triangles within
         THashSet<Triangle> triangles = forward.list(edges);
 
-        // Creating an edge density estimator
+        // Estimating the lambda density value of each edge
         EdgeDensityEstimator estimator = new BinaryEstimator(50);
 
-        // Estimating density of each edge
-        THashMap<Edge, AugmentedRange> emap = estimator.estimate(triangles);
+        THashMap<Edge, AugmentedRange> lambdas = estimator.estimate(triangles);
 
-        // Iterating through each triangle
+        // For each triangle emit the incident edges by the lambda bounds
         for (Triangle t : triangles) {
-            // Getting the first edge
+            // Getting the lambda values fot the first edge
             Edge e1 = new Edge(t.v, t.u);
 
-            // Getting the lambda estimation of the edge
-            int lambda1 = emap.get(e1).upper;
+            AugmentedRange lambda1 = lambdas.get(e1);
 
-            // Emitting the triangle followed by the first edge augmented by its lambda bounds
-            context.write(new Triple(t.v, t.u, t.w), new Quad(t.v, t.u, lambda1, lambda1));
+            // Emitting the triangle followed by the edge attached with the lambda bounds
+            context.write(new Triple(t.v, t.u, t.w), new Quad(t.v, t.u, lambda1.lower, lambda1.upper));
 
-            // Getting the second edge
+            // Getting the lambda values fot the second edge
             Edge e2 = new Edge(t.u, t.w);
 
-            // Getting the lambda estimation of the edge
-            int lambda2 = emap.get(e2).upper;
+            AugmentedRange lambda2 = lambdas.get(e2);
 
-            // Emitting the triangle followed by the second edge augmented by its lambda bounds
-            context.write(new Triple(t.v, t.u, t.w), new Quad(t.u, t.w, lambda2, lambda2));
+            // Emitting the triangle followed by the edge attached with the lambda bounds
+            context.write(new Triple(t.v, t.u, t.w), new Quad(t.u, t.w, lambda2.lower, lambda2.upper));
 
-            // Getting the third edge
+            // Getting the lambda values fot the third edge
             Edge e3 = new Edge(t.v, t.w);
 
-            // Getting the lambda estimation of the edge
-            int lambda3 = emap.get(e3).upper;
+            AugmentedRange lambda3 = lambdas.get(e3);
 
-            // Emitting the triangle followed by the third edge augmented by its lambda bounds
-            context.write(new Triple(t.v, t.u, t.w), new Quad(t.v, t.w, lambda3, lambda3));
+            // Emitting the triangle followed by the edge attached with the lambda bounds
+            context.write(new Triple(t.v, t.u, t.w), new Quad(t.v, t.w, lambda3.lower, lambda3.upper));
         }
     }
 }

@@ -49,8 +49,8 @@ public class LocalEstimation extends Configured implements Tool {
             logger.error("Usage: hadoop jar <jar-file> " + name + " [genericOptions] <input> <delimiter> <rho> <sort> <tasks> <output>\n");
 
             System.out.println("Arguments required are");
-            System.out.println(" <input> \tpath in DFS to data given as a list of triangles per line");
-            System.out.println(" <delimiter> \tcharacter used in order to separate the integer vertices of each triangle");
+            System.out.println(" <input> \tpath in DFS to data given as a list of edges per line");
+            System.out.println(" <delimiter> \tcharacter used in order to separate the integer vertices of each edge");
             System.out.println(" <rho> \tnumber of disjoint vertex partitions");
             System.out.println(" <sort> \ttrue to sort vertices in ascending order before processing otherwise false");
             System.out.println(" <tasks> \tnumber of the reducer tasks used");
@@ -99,14 +99,12 @@ public class LocalEstimation extends Configured implements Tool {
 
             exitCode = lambda.waitForCompletion(true) ? 0 : 1;
 
+            long end = System.currentTimeMillis();
+
             if (exitCode != 0) {
                 throw new AbnormalExitException("Abnormal exit occurred running "
                         + " sprint job with entry name '" + lambda.getJobName() + "'");
             }
-
-            logger.info("Sprint job with entry name '" + lambda.getJobName() + "' finished");
-
-            long end = System.currentTimeMillis();
 
             logger.info("Sprint job with entry name '" + name + "' completed in "
                     + new DecimalFormat(".###").format(((double) (end - start) / 1000 / 60))
