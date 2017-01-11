@@ -7,20 +7,20 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
 /**
- * An interface for algorithms scoring each edge within the given graph
- * participates at least in one triangle, as an indicator of the neighborhood
- * density.
+ * An edge lambda density estimator scoring each edge within a given graph
+ * regarding the number of triangles the edge belongs to, as an indicator of the
+ * neighborhood density.
  *
  * @author Akis Papadopoulos
  */
 public interface EdgeDensityEstimator {
 
     /**
-     * A method scoring for each edge the neighborhood density, given the
-     * triangles within.
+     * A method scoring each edge with a neighborhood density value given the
+     * set of triangles of the graph.
      *
-     * @param triangles a set of the triangles within the graph.
-     * @return a hash map between edge and its lambda density score.
+     * @param triangles the set of the triangles within the graph.
+     * @return a map of lambda density values for each edge.
      */
     public THashMap<Edge, AugmentedRange> estimate(THashSet<Triangle> triangles);
 }
