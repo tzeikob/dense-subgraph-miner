@@ -51,7 +51,7 @@ public class LocalEstimation extends Configured implements Tool {
             System.out.println("Arguments required are");
             System.out.println(" <input> \tpath in DFS to data given as a list of edges per line");
             System.out.println(" <delimiter> \tcharacter used in order to separate the integer vertices of each edge");
-            System.out.println(" <rho> \tnumber of disjoint vertex partitions");
+            System.out.println(" <rho> \t\tnumber of disjoint vertex partitions");
             System.out.println(" <sort> \ttrue to sort vertices in ascending order before processing otherwise false");
             System.out.println(" <tasks> \tnumber of the reducer tasks used");
             System.out.println(" <output> \tpath in DFS to save the list of triangles along with the edges attached with the optimal lambda values\n");
