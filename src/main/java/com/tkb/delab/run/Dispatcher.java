@@ -1,5 +1,8 @@
 package com.tkb.delab.run;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,14 +35,16 @@ public class Dispatcher {
 
     public static void main(String[] args) throws Exception {
         // Printing the license notice
-        System.out.println("\nCopyright 2016 Akis Papadopoulos, https://github.com/tzeikob/dense-subgraph-miner\n");
-        System.out.println("Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this");
-        System.out.println("file except in compliance with the License. You may obtain a copy of the License at \n");
-        System.out.println("http://www.apache.org/licenses/LICENSE-2.0 \n");
-        System.out.println("Unless required by applicable law or agreed to in writing, software distributed under the");
-        System.out.println("License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,");
-        System.out.println("either express or implied. See the License for the specific language governing permissions");
-        System.out.println("and limitations under the License.\n");
+        try (BufferedReader br = new BufferedReader(new FileReader("LICENSE"))) {
+            String line = null;
+
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException exc) {
+            System.err.println("Error: Application aborted, missing LICENSE file.");
+            System.exit(1);
+        }
 
         try {
             // Invoking the chosen entry job
@@ -58,9 +63,9 @@ public class Dispatcher {
             logger.error("Unable to run sprint job entry with args " + Arrays.asList(args));
             logger.error("Please check the documentation, https://github.com/tzeikob/dense-subgraph-miner");
             logger.error("Usage: hadoop jar <jar-file> <job-entry> [genericOptions] <args>\n");
-            
+
             System.out.println("Sprint job entries supported are");
-            for(String key : entries.keySet()) {
+            for (String key : entries.keySet()) {
                 System.out.println(" " + key);
             }
             System.out.println();
